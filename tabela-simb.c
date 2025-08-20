@@ -8,10 +8,16 @@ struct elem{
 	char nome[100];
 	enum tipo t;
 };
+struct tbs{
+	struct elem elems[3];
+	struct  tbs *pTbs;
+};
 int main(){
-	struct elem e[3];
-	strcpy(e[0].nome,"var");
-	e[0].t = FUN;
-	printf("%s - %d",e[0].nome,e[0].t);
+	struct tbs tb1;
+	struct tbs tb2;
+	strcpy(tb1.elems[0].nome,"var1");
+	tb1.elems[0].t = FUN;
+	tb1.pTbs = &tb2;
+	printf("%s - %d",tb1.elems[0].nome,tb1.elems[0].t);
 return 0;
 }
