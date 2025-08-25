@@ -1,3 +1,8 @@
+%{
+enum tokens{
+   CAR,INT	
+}; 
+%}
 ALFANUM [0-9a-z][a-z0-9]*
 %%
 "car"   {printf("%s",yytext);}
@@ -19,4 +24,3 @@ ALFANUM [0-9a-z][a-z0-9]*
 void main(){
     yylex();
 }
-
