@@ -1,23 +1,44 @@
 %{
 enum tokens{
-   CAR,INT	
+   CAR,INT,PROGRAMA,
+   RETORNE,LEIA,ESCREVA,NOVALINHA,
+   SE, ENTAO,SENAO,ENQUANTO,EXECUTE,PV,
+   AP,FP,ATRIB,EQUAL,DIF,V,MAIOR,MENOR,
+   MAIOREQUAL,MENOREQUAL,SUM,SUB,MUL,DIV	
 }; 
 %}
-ALFANUM [0-9a-z][a-z0-9]*
+DIGIT[0-9]
+CARACTER[A-Z][a-z]
+ID ("_" | {CARACTER}){CARACTER}({CARACTER}*|{DIGIT}*|("_")*)*
 %%
-"car"   {printf("%s",yytext);}
-"int"   {printf("%s",yytext);}
-"programa" {printf("%s",yytext);}
-"retorne" {printf("%s",yytext);}
-"leia"	{printf("%s",yytext);}
-"escreva"	{printf("%s",yytext);}
-"novalinha" {printf("%s",yytext);}
-"se"	{printf("%s",yytext);}
+"car"   {printf("%s",yytext);return CAR;}
+"int"   {printf("%s",yytext);return INT;}
+"programa" {printf("%s",yytext);return PROGRAMA;}
+"retorne" {printf("%s",yytext);return RETORNE;}
+"leia"	{printf("%s",yytext);return LEIA;}
+"escreva"	{printf("%s",yytext);return ESCREVA;}
+"novalinha" {printf("%s",yytext);return NOVALINHA;}
+"se"	{printf("%s",yytext);return SE;}
 "entao"	{printf("%s",yytext);}
 "senao"	{printf("%s",yytext);}
 "enquanto"	{printf("%s",yytext);}
 "execute"	{printf("%s",yytext);}
-"/*"{ALFANUM}"*/" {printf("Comentario");}
+";"	{printf("%s",yytext);return PV;}
+"," 	{printf("%s",yytext);return V;}
+"("	{printf("%s",yytext);return AP;}
+")"	{printf("%s",yytext);return FP;}
+"="	{printf("%s",yytext);return ATRIB;}
+"=="	{printf("%s",yytext);return EQUAL;}
+"!="	{printf("%s",yytext);return DIF;}
+">"	{printf("%s",yytext);return MAIOR;}
+"<"	{printf("%s",yytext);return MENOR;}
+">="	{printf("%s",yytext);return MAIOREQUAL;}
+"<="	{printf("%s",yytext);return MENOREQUAL;}
+"+"	{printf("%s",yytext);return SUM;}
+"-"	{printf("%s",yytext);return SUB;}
+"*"	{printf("%s",yytext);return MUL;}
+"/"	{printf("%s",yytext);return DIV;}
+ID 	{printf("%s",yytext);}
 .	{printf("ERRO");}
 %%
 
