@@ -4,12 +4,12 @@ enum tokens{
    RETORNE,LEIA,ESCREVA,NOVALINHA,
    SE, ENTAO,SENAO,ENQUANTO,EXECUTE,PV,
    AP,FP,ATRIB,EQUAL,DIF,V,MAIOR,MENOR,
-   MAIOREQUAL,MENOREQUAL,SUM,SUB,MUL,DIV	
+   MAIOREQUAL,MENOREQUAL,SUM,SUB,MUL,DIV,
+   ID	
 }; 
 %}
 DIGIT[0-9]
-CARACTER[A-Z][a-z]
-ID ("_" | {CARACTER}){CARACTER}({CARACTER}*|{DIGIT}*|("_")*)*
+CARACTER[A-Z]|[a-z]
 %%
 "car"   {printf("%s",yytext);return CAR;}
 "int"   {printf("%s",yytext);return INT;}
@@ -38,7 +38,7 @@ ID ("_" | {CARACTER}){CARACTER}({CARACTER}*|{DIGIT}*|("_")*)*
 "-"	{printf("%s",yytext);return SUB;}
 "*"	{printf("%s",yytext);return MUL;}
 "/"	{printf("%s",yytext);return DIV;}
-ID 	{printf("%s",yytext);}
+("_"|{CARACTER})({DIGIT}*|{CARACTER}*|"_"*)*	{printf("%s",yytext);return ID;}
 .	{printf("ERRO");}
 %%
 
