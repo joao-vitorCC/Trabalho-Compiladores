@@ -5,40 +5,44 @@ enum tokens{
    SE, ENTAO,SENAO,ENQUANTO,EXECUTE,PV,
    AP,FP,ATRIB,EQUAL,DIF,V,MAIOR,MENOR,
    MAIOREQUAL,MENOREQUAL,SUM,SUB,MUL,DIV,
-   ID	
+   ID,NUM,EXCL,E,OU	
 }; 
 %}
 DIGIT[0-9]
 CARACTER[A-Z]|[a-z]
 %%
-"car"   {printf("%s",yytext);return CAR;}
-"int"   {printf("%s",yytext);return INT;}
-"programa" {printf("%s",yytext);return PROGRAMA;}
-"retorne" {printf("%s",yytext);return RETORNE;}
-"leia"	{printf("%s",yytext);return LEIA;}
-"escreva"	{printf("%s",yytext);return ESCREVA;}
-"novalinha" {printf("%s",yytext);return NOVALINHA;}
-"se"	{printf("%s",yytext);return SE;}
-"entao"	{printf("%s",yytext);}
-"senao"	{printf("%s",yytext);}
-"enquanto"	{printf("%s",yytext);}
-"execute"	{printf("%s",yytext);}
-";"	{printf("%s",yytext);return PV;}
-"," 	{printf("%s",yytext);return V;}
-"("	{printf("%s",yytext);return AP;}
-")"	{printf("%s",yytext);return FP;}
-"="	{printf("%s",yytext);return ATRIB;}
-"=="	{printf("%s",yytext);return EQUAL;}
-"!="	{printf("%s",yytext);return DIF;}
-">"	{printf("%s",yytext);return MAIOR;}
-"<"	{printf("%s",yytext);return MENOR;}
-">="	{printf("%s",yytext);return MAIOREQUAL;}
-"<="	{printf("%s",yytext);return MENOREQUAL;}
-"+"	{printf("%s",yytext);return SUM;}
-"-"	{printf("%s",yytext);return SUB;}
-"*"	{printf("%s",yytext);return MUL;}
-"/"	{printf("%s",yytext);return DIV;}
-("_"|{CARACTER})({DIGIT}*|{CARACTER}*|"_"*)*	{printf("%s",yytext);return ID;}
+"car"   {printf("%s - %d",yytext,CAR);return CAR;}
+"int"   {printf("%s - %d",yytext,INT);return INT;}
+"programa" {printf("%s - %d",yytext,PROGRAMA);return PROGRAMA;}
+"retorne" {printf("%s - %d",yytext,RETORNE);return RETORNE;}
+"leia"	{printf("%s - %d",yytext,LEIA);return LEIA;}
+"escreva"	{printf("%s - %d",yytext,ESCREVA);return ESCREVA;}
+"novalinha" {printf("%s - %d",yytext,NOVALINHA);return NOVALINHA;}
+"se"	{printf("%s - %d",yytext,SE);return SE;}
+"entao"	{printf("%s - %d",yytext,ENTAO);return ENTAO;}
+"senao"	{printf("%s - %d",yytext,SENAO);return SENAO;}
+"enquanto"	{printf("%s - %d",yytext,ENQUANTO);return ENQUANTO;}
+"execute"	{printf("%s - %d",yytext,EXECUTE);return EXECUTE;}
+";"	{printf("%s - %d",yytext,PV);return PV;}
+"," 	{printf("%s - %d",yytext,V);return V;}
+"("	{printf("%s - %d",yytext,AP);return AP;}
+")"	{printf("%s - %d",yytext,FP);return FP;}
+"="	{printf("%s - %d",yytext,ATRIB);return ATRIB;}
+"=="	{printf("%s - %d",yytext,EQUAL);return EQUAL;}
+"!="	{printf("%s - %d",yytext,DIF);return DIF;}
+">"	{printf("%s - %d",yytext,MAIOR);return MAIOR;}
+"<"	{printf("%s - %d",yytext,MENOR);return MENOR;}
+">="	{printf("%s - %d",yytext,MAIOREQUAL);return MAIOREQUAL;}
+"<="	{printf("%s - %d",yytext,MENOREQUAL);return MENOREQUAL;}
+"+"	{printf("%s - %d",yytext,SUM);return SUM;}
+"-"	{printf("%s - %d",yytext,SUB);return SUB;}
+"*"	{printf("%s - %d",yytext,MUL);return MUL;}
+"/"	{printf("%s - %d",yytext,DIV);return DIV;}
+"!"	{printf("%s - %d",yytext,EXCL);return EXCL;}
+"e"	{printf("%s - %d",yytext,E);return E;}
+"ou"	{printf("%s - %d",yytext,OU);return OU;}
+("_"|{CARACTER})({DIGIT}*|{CARACTER}*|"_"*)*	{printf("%s - %d",yytext,ID);return ID;}
+{DIGIT}+	{printf("%s - %d",yytext,NUM);return NUM;}
 .	{printf("ERRO");}
 %%
 
