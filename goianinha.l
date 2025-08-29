@@ -1,7 +1,7 @@
 %{
-enum tokens{
+
 #include"decl.h"		
-}; 
+ 
 %}
 DIGIT[0-9]
 CARACTER[A-Z]|[a-z]
