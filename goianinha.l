@@ -1,6 +1,14 @@
+%option noyywrap
+/* Enable Warnings */
+%option warn
+/* Enable line number */
+%option yylineno
+/* Make flex create a header file */
+%option header-file="lex.yy.h"
+
 %{
 
-#include"decl.h"		
+#include"goianinha.tab.h"		
  
 %}
 DIGIT[0-9]
@@ -41,6 +49,3 @@ CARACTER[A-Z]|[a-z]
 .	{printf("ERRO");}
 %%
 
-void main(){
-    yylex();
-}
