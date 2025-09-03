@@ -44,6 +44,8 @@ CARACTER[A-Z]|[a-z]
 "!"	{printf("%s - %d",yytext,EXCL);return EXCL;}
 "e"	{printf("%s - %d",yytext,E);return E;}
 "ou"	{printf("%s - %d",yytext,OU);return OU;}
+"{"	{printf("%s - %d",yytext,AC);return AC;}
+"}"	{printf("%s - %d",yytext,FC);return FC;}
 ("_"|{CARACTER})({DIGIT}*|{CARACTER}*|"_"*)*	{printf("%s - %d",yytext,ID);return ID;}
 {DIGIT}+	{printf("%s - %d",yytext,NUM);return NUM;}
 .	{printf("ERRO");}
