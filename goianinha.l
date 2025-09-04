@@ -13,6 +13,7 @@
 %}
 DIGIT[0-9]
 CARACTER[A-Z]|[a-z]
+WHITESPACE      [\t' '\n\r]
 %x comentario 
 
 %%
@@ -28,7 +29,8 @@ CARACTER[A-Z]|[a-z]
 	return(EOF);
 }
 <comentario>\n
-<comentario>"*"+"/" {BEGIN(INITIAL);} 		 
+<comentario>"*"+"/" {BEGIN(INITIAL);} 
+{WHITESPACE}+ 		 
 "car"   {printf("%s - %d",yytext,CAR);return CAR;}
 "int"   {printf("%s - %d",yytext,INT);return INT;}
 "programa" {printf("%s - %d",yytext,PROGRAMA);return PROGRAMA;}
