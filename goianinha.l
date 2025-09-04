@@ -9,11 +9,26 @@
 %{
 
 #include"goianinha.tab.h"		
- 
+
 %}
 DIGIT[0-9]
 CARACTER[A-Z]|[a-z]
+%x comentario 
+
 %%
+  int lin_ini_com;	
+"/*" {BEGIN(comentario); lin_ini_com = yylineno;
+       fprintf(stdout,"comentario na linha %d\n",yylineno);
+      }
+<comentario>[^*\n]* 
+<comentario>"*"+[^/\n]
+<comentario><<EOF>> {
+	fprintf(stdout,"ERRO: comentario da linha %d",lin_ini_com);  
+	fprintf(stderr,"nao termina\n");
+	return(EOF);
+}
+<comentario>\n
+<comentario>"*"+"/" {BEGIN(INITIAL);} 		 
 "car"   {printf("%s - %d",yytext,CAR);return CAR;}
 "int"   {printf("%s - %d",yytext,INT);return INT;}
 "programa" {printf("%s - %d",yytext,PROGRAMA);return PROGRAMA;}
