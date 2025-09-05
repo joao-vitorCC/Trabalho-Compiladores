@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
+int s=0;
 enum tipo{
 	VAR,
 	FUN
@@ -12,10 +13,10 @@ struct elem{
 };
 struct tbs{
 	struct  tbs *pai;
-	struct elem *elems;
+	struct elem elems[4];
 	struct  tbs *filho;
 };
-struct  tbs* iniciarTabelaSim(){
+struct  tbs * iniciarTabelaSim(){
 	struct tbs * ini;
 	ini = (struct tbs *)malloc(sizeof(struct tbs));
 	ini->pai = NULL;
@@ -28,21 +29,52 @@ void novoEscopo(struct tbs * tb){
 	tb->filho = novo;
 	novo->pai = tb;
 }
-void insereVar(struct tbs * tb,char name[],int type,int position){
+/*void criaVet(struct tbs * tb){
 	tb->elems = (struct elem *)malloc(4 * sizeof(struct elem));
-	tb->elems[0].pos = position;
-	strcpy(tb->elems[0].nome,name);
-	tb->elems[0].t = VAR;
+}*/
+void insereVar(struct tbs * tb,char name[],int type,int position){
+	tb->elems[s].pos = position;
+	strcpy(tb->elems[s].nome,name);
+	tb->elems[s].t = VAR;
 }
+struct  tbs* encontraUltimo(struct  tbs* tb){
+	struct tbs * ultimo;
+	ultimo = tb;
+	while(ultimo->filho != NULL){
+		ultimo = ultimo->filho;
+	} 
+return ultimo;
+}
+struct  tbs* encontraPrimeiro(struct  tbs* tb){
+	struct tbs * primeiro;
+	primeiro = tb;
+	while(primeiro->pai != NULL){
+		primeiro = primeiro->pai;
+	} 
+return primeiro;
+}
+/*struct tbs * busca(struct tbs * tb,char valor[]){
+	int tam;
+}*/ 
+/*int tamanhoVetor(struct elem * vet){
+	printf("%ld\n");
+	return sizeof(vet)/sizeof(vet[0]);
+}*/
 int main(){
 	struct tbs * tb1;
-	struct tbs tb2;
+	struct tbs * tb2;
+	struct elem * e;
 	tb1 = iniciarTabelaSim();
 	insereVar(tb1,"var1",VAR,10);
+	e = tb1->elems;
 	//strcpy(tb1->elems[0].nome,"fun1");
 	//tb1->elems[0].t = FUN;
 	novoEscopo(tb1);
-	printf("%s - %d - %p",tb1->elems[0].nome,tb1->elems[0].t,tb1->filho);
+	novoEscopo(tb1->filho);
+	printf("%ld\n",sizeof(*tb1));
+	tb2 = encontraPrimeiro(tb1->filho);
+	printf("1 %s - %d - %p\n",tb1->elems[2].nome,tb1->elems[0].t,tb1);
+	printf("%p %p\n",tb2,tb2->filho);
 	/*
 	strcpy(tb1.elems[0].nome,"var1");
 	tb1.elems[0].t = FUN;
