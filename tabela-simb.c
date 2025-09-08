@@ -10,17 +10,21 @@ struct elem{
 	char nome[100];
 	enum tipo t;
 	int pos;
+	
 };
 struct tbs{
 	struct  tbs *pai;
-	struct elem elems[4];
+	struct elem * elems;
 	struct  tbs *filho;
+	int tamanho;
 };
 struct  tbs * iniciarTabelaSim(){
 	struct tbs * ini;
 	ini = (struct tbs *)malloc(sizeof(struct tbs));
 	ini->pai = NULL;
 	ini->filho = NULL;
+	ini->elems = (struct elem *)malloc(4 * sizeof(struct elem));
+	ini->tamanho = 0;
 return ini;	
 }
 void novoEscopo(struct tbs * tb){
@@ -29,13 +33,12 @@ void novoEscopo(struct tbs * tb){
 	tb->filho = novo;
 	novo->pai = tb;
 }
-/*void criaVet(struct tbs * tb){
-	tb->elems = (struct elem *)malloc(4 * sizeof(struct elem));
-}*/
 void insereVar(struct tbs * tb,char name[],int type,int position){
-	tb->elems[s].pos = position;
-	strcpy(tb->elems[s].nome,name);
-	tb->elems[s].t = VAR;
+	tb->elems[position].pos = position;
+	strcpy(tb->elems[position].nome,name);
+	tb->elems[position].t = VAR;
+	tb->tamanho++;
+	printf("debuger : %d %s %d\n",tb->elems[position].pos,tb->elems[position].nome,tb->elems[position].t);
 }
 struct  tbs* encontraUltimo(struct  tbs* tb){
 	struct tbs * ultimo;
@@ -56,25 +59,22 @@ return primeiro;
 /*struct tbs * busca(struct tbs * tb,char valor[]){
 	int tam;
 }*/ 
-/*int tamanhoVetor(struct elem * vet){
-	printf("%ld\n");
-	return sizeof(vet)/sizeof(vet[0]);
-}*/
 int main(){
 	struct tbs * tb1;
 	struct tbs * tb2;
-	struct elem * e;
 	tb1 = iniciarTabelaSim();
-	insereVar(tb1,"var1",VAR,10);
-	e = tb1->elems;
-	//strcpy(tb1->elems[0].nome,"fun1");
-	//tb1->elems[0].t = FUN;
+	insereVar(tb1,"var1",VAR,0);
+	insereVar(tb1,"var2",VAR,1);
+	insereVar(tb1,"var3",VAR,2);
+	insereVar(tb1,"var4",VAR,3);
+	insereVar(tb1,"var5",VAR,4);
+	insereVar(tb1,"var6",VAR,5);
 	novoEscopo(tb1);
 	novoEscopo(tb1->filho);
-	printf("%ld\n",sizeof(*tb1));
+	//printf("%ld\n",sizeof(*tb1));
 	tb2 = encontraPrimeiro(tb1->filho);
-	printf("1 %s - %d - %p\n",tb1->elems[2].nome,tb1->elems[0].t,tb1);
-	printf("%p %p\n",tb2,tb2->filho);
+	printf("%s - %d - %d\n",tb1->elems[5].nome,tb1->elems[5].t,tb1->tamanho);
+	//printf("%p %p\n",tb2,tb2->filho);
 	/*
 	strcpy(tb1.elems[0].nome,"var1");
 	tb1.elems[0].t = FUN;
