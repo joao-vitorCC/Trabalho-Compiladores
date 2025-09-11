@@ -33,6 +33,9 @@ void novoEscopo(struct tbs * tb){
 	tb->filho = novo;
 }
 void insereVar(struct tbs * tb,char name[],int type,int position){
+	if (tb->tamanho >= 4) {
+      tb->elems  = (struct elem *)realloc(tb->elems, 2 * sizeof(struct elem));
+    }
 	tb->elems[position].pos = position;
 	strcpy(tb->elems[position].nome,name);
 	tb->elems[position].t = VAR;
