@@ -18,10 +18,10 @@ struct tbs{
 	struct  tbs *filho;
 	int tamanho;
 };
-struct  tbs * iniciarTabelaSim(){
+struct  tbs * iniciarTabelaSim(struct  tbs *pai){
 	struct tbs * ini;
 	ini = (struct tbs *)malloc(sizeof(struct tbs));
-	ini->pai = NULL;
+	ini->pai = pai;
 	ini->filho = NULL;
 	ini->elems = (struct elem *)malloc(4 * sizeof(struct elem));
 	ini->tamanho = 0;
@@ -29,9 +29,8 @@ return ini;
 }
 void novoEscopo(struct tbs * tb){
 	struct tbs * novo;
-	novo = iniciarTabelaSim();
+	novo = iniciarTabelaSim(tb);
 	tb->filho = novo;
-	novo->pai = tb;
 }
 void insereVar(struct tbs * tb,char name[],int type,int position){
 	tb->elems[position].pos = position;
@@ -62,7 +61,7 @@ return primeiro;
 int main(){
 	struct tbs * tb1;
 	struct tbs * tb2;
-	tb1 = iniciarTabelaSim();
+	tb1 = iniciarTabelaSim(NULL);
 	insereVar(tb1,"var1",VAR,0);
 	insereVar(tb1,"var2",VAR,1);
 	insereVar(tb1,"var3",VAR,2);
