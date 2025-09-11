@@ -58,9 +58,21 @@ struct  tbs* encontraPrimeiro(struct  tbs* tb){
 	} 
 return primeiro;
 }
-/*struct tbs * busca(struct tbs * tb,char valor[]){
+struct tbs * busca(struct tbs * tb,char valor[]){
 	int tam;
-}*/ 
+	struct tbs * atual = encontraUltimo(tb);
+	printf("%p\n",atual);
+	while (atual != NULL) {
+        for (int i = 0; i < atual->tamanho; i++) {
+            if (strcmp(atual->elems[i].nome, valor) == 0) {
+            	printf("%s - %d - %d\n",atual->elems[0].nome,atual->elems[0].t,atual->tamanho);
+                return atual;
+            }
+        }
+        atual = atual->filho;
+    }
+    return NULL;
+}
 int main(){
 	struct tbs * tb1;
 	struct tbs * tb2;
@@ -72,10 +84,13 @@ int main(){
 	insereVar(tb1,"var5",VAR,4);
 	insereVar(tb1,"var6",VAR,5);
 	novoEscopo(tb1);
-	novoEscopo(tb1->filho);
+	//novoEscopo(tb1->filho);
+	insereVar(tb1->filho,"var1",VAR,0);
+	printf("%p\n",tb1->filho);
+	tb2 = busca(tb1,"var1");
 	//printf("%ld\n",sizeof(*tb1));
-	tb2 = encontraPrimeiro(tb1->filho);
-	printf("%s - %d - %d\n",tb1->elems[5].nome,tb1->elems[5].t,tb1->tamanho);
+	//tb2 = encontraPrimeiro(tb1->filho);
+	//printf("%s - %d - %d\n",tb2->elems[0].nome,tb2->elems[0].t,tb2->tamanho);
 	//printf("%p %p\n",tb2,tb2->filho);
 	/*
 	strcpy(tb1.elems[0].nome,"var1");
