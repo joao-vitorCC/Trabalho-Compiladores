@@ -1,20 +1,26 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
-int s=0;
-enum tipo{
-	VAR,
-	FUN
+enum tipoVar{
+	INT,
+	CAR
 };
-struct elem{
+struct elemVar{
 	char nome[100];
-	enum tipo t;
 	int pos;
+	enum tipoVar tv;
+	
+};
+struct elemFun{
+	char nomeF[100];
+	int numArg;
+	enum tipoVar tRet;
+	char nome[50][100];
 	
 };
 struct tbs{
 	struct  tbs *pai;
-	struct elem * elems;
+	struct elemVar * elems;
 	struct  tbs *filho;
 	int tamanho;
 };
@@ -23,7 +29,7 @@ struct  tbs * iniciarTabelaSim(struct  tbs *pai){
 	ini = (struct tbs *)malloc(sizeof(struct tbs));
 	ini->pai = pai;
 	ini->filho = NULL;
-	ini->elems = (struct elem *)malloc(4 * sizeof(struct elem));
+	ini->elems = (struct elemVar *)malloc(4 * sizeof(struct elemVar));
 	ini->tamanho = 0;
 return ini;	
 }
@@ -34,11 +40,11 @@ void novoEscopo(struct tbs * tb){
 }
 void insereVar(struct tbs * tb,char name[],int type,int position){
 	if (tb->tamanho >= 4) {
-      tb->elems  = (struct elem *)realloc(tb->elems, 2 * sizeof(struct elem));
+      tb->elems  = (struct elemVar *)realloc(tb->elems, 2 * sizeof(struct elemVar));
     }
 	tb->elems[position].pos = position;
 	strcpy(tb->elems[position].nome,name);
-	tb->elems[position].t = VAR;
+	tb->elems[position].tv = type;
 	tb->tamanho++;
 	printf("debuger : %d %s %d\n",tb->elems[position].pos,tb->elems[position].nome,tb->elems[position].t);
 }
@@ -77,12 +83,12 @@ int main(){
 	struct tbs * tb1;
 	struct tbs * tb2;
 	tb1 = iniciarTabelaSim(NULL);
-	insereVar(tb1,"var1",VAR,0);
-	insereVar(tb1,"var2",VAR,1);
-	insereVar(tb1,"var3",VAR,2);
-	insereVar(tb1,"var4",VAR,3);
-	insereVar(tb1,"var5",VAR,4);
-	insereVar(tb1,"var6",VAR,5);
+	insereVar(tb1,"var1",INT,0);
+	insereVar(tb1,"var2",CAR,1);
+	insereVar(tb1,"var3",INT,2);
+	insereVar(tb1,"var4",CAR,3);
+	insereVar(tb1,"var5",CAR,4);
+	insereVar(tb1,"var6",INT,5);
 	novoEscopo(tb1);
 	//novoEscopo(tb1->filho);
 	insereVar(tb1->filho,"var1",VAR,0);
