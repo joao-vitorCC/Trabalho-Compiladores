@@ -15,14 +15,16 @@ struct elemFun{
 	char nomeF[100];
 	int numArg;
 	enum tipoVar tRet;
-	char nome[50][100];
+	struct elemVar * param;
 	
 };
 struct tbs{
 	struct  tbs *pai;
 	struct elemVar * elems;
+	struct elemFun * elemsf;
 	struct  tbs *filho;
-	int tamanho;
+	int tamanhoV;
+	int tamanhoF;
 };
 struct  tbs * iniciarTabelaSim(struct  tbs *pai){
 	struct tbs * ini;
@@ -30,7 +32,9 @@ struct  tbs * iniciarTabelaSim(struct  tbs *pai){
 	ini->pai = pai;
 	ini->filho = NULL;
 	ini->elems = (struct elemVar *)malloc(4 * sizeof(struct elemVar));
-	ini->tamanho = 0;
+	ini->elemsf = (struct elemFun *)malloc(4 * sizeof(struct elemFun));
+	ini->tamanhoV = 0;
+	ini->tamanhoF = 0;
 return ini;	
 }
 void novoEscopo(struct tbs * tb){
@@ -39,15 +43,33 @@ void novoEscopo(struct tbs * tb){
 	tb->filho = novo;
 }
 void insereVar(struct tbs * tb,char name[],int type,int position){
-	if (tb->tamanho >= 4) {
-      tb->elems  = (struct elemVar *)realloc(tb->elems, 2 * sizeof(struct elemVar));
-    }
+	if (tb->tamanhoV >= 4) {
+      		tb->elems  = (struct elemVar *)realloc(tb->elems, 2 * sizeof(struct elemVar));
+    	}
 	tb->elems[position].pos = position;
 	strcpy(tb->elems[position].nome,name);
 	tb->elems[position].tv = type;
-	tb->tamanho++;
-	printf("debuger : %d %s %d\n",tb->elems[position].pos,tb->elems[position].nome,tb->elems[position].t);
+	tb->tamanhoV++;
+	//printf("debuger : %d %s %d\n",tb->elems[position].pos,tb->elems[position].nome,tb->elems[position].t);
 }
+void insereFun(struct tbs * tb,char name[],int typeRet,int nParam,struct elemVar Params[100],int position){
+	if (tb->tamanhoF >= 4) {
+      		tb->elemsf  = (struct elemFun *)realloc(tb->elemsf, 2 * sizeof(struct elemFun));
+    	}
+	tb->elemsf[position].numArg = nParam;
+	strcpy(tb->elemsf[position].nomeF,name);
+	tb->elemsf[position].tRet = typeRet;
+	if(nParam > 0){
+		tb->elemsf[position].param = Params;
+	}
+	tb->tamanhoF++;
+	//printf("debuger : %d %s %d\n",tb->elems[position].pos,tb->elems[position].nome,tb->elems[position].t);
+}
+void criaParametro(struct elemVar params[100],char name[],int pos,int typeP){
+	strcpy(params[pos].nome,name);
+	params[pos].tv = typeP;
+}
+
 struct  tbs* encontraUltimo(struct  tbs* tb){
 	struct tbs * ultimo;
 	ultimo = tb;
@@ -69,9 +91,9 @@ struct tbs * busca(struct tbs * tb,char valor[]){
 	struct tbs * atual = encontraUltimo(tb);
 	printf("%p\n",atual);
 	while (atual != NULL) {
-        for (int i = 0; i < atual->tamanho; i++) {
+        for (int i = 0; i < atual->tamanhoV; i++) {
             if (strcmp(atual->elems[i].nome, valor) == 0) {
-            	printf("%s - %d - %d\n",atual->elems[0].nome,atual->elems[0].t,atual->tamanho);
+            	//printf("%s - %d - %d\n",atual->elems[0].nome,atual->elems[0].t,atual->tamanho);
                 return atual;
             }
         }
@@ -79,6 +101,36 @@ struct tbs * busca(struct tbs * tb,char valor[]){
     }
     return NULL;
 }
+void removeEscopo(struct tbs * tb){
+	struct tbs * atual;
+	struct tbs * pai;
+	atual = encontraUltimo(tb);
+	if(atual->pai != NULL){
+		pai = atual->pai;
+		pai->filho = NULL;
+	}
+}
+void desalocaTabela(struct tbs* tb) {
+    if (tb == NULL) return;
+
+    // Desaloca filho recursivamente
+    desalocaTabela(tb->filho);
+
+    // Libera parâmetros de cada função
+    for (int i = 0; i < tb->tamanhoF; i++) {
+        if (tb->elemsf[i].param != NULL) {
+            free(tb->elemsf[i].param);
+        }
+    }
+
+    // Libera arrays
+    free(tb->elems);
+    free(tb->elemsf);
+
+    // Libera a própria tabela
+    free(tb);
+}
+
 int main(){
 	struct tbs * tb1;
 	struct tbs * tb2;
@@ -91,7 +143,7 @@ int main(){
 	insereVar(tb1,"var6",INT,5);
 	novoEscopo(tb1);
 	//novoEscopo(tb1->filho);
-	insereVar(tb1->filho,"var1",VAR,0);
+	insereVar(tb1->filho,"var1",CAR,0);
 	printf("%p\n",tb1->filho);
 	tb2 = busca(tb1,"var1");
 	//printf("%ld\n",sizeof(*tb1));
