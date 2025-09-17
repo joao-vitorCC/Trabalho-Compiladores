@@ -1,0 +1,20 @@
+# Variáveis
+CC = gcc
+CFLAGS = -Wall
+
+# Alvo principal
+main: main.o tabela-simb.o
+	$(CC) $(CFLAGS) -o main main.o tabela-simb.o
+
+# Compilação dos arquivos objeto
+main.o: main.c tabelasimb.h
+	$(CC) $(CFLAGS) -c main.c
+
+tabela-simb.o: tabela-simb.c tabelasimb.h
+	$(CC) $(CFLAGS) -c tabela-simb.c
+
+# Limpeza dos arquivos gerados
+clean:
+	rm -f *.o main
+
+	
