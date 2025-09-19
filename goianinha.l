@@ -15,6 +15,7 @@ DIGIT[0-9]
 CARACTER[A-Z]|[a-z]
 WHITESPACE      [\t' '\n\r]
 %x comentario 
+%x cadeiaCaractere
 
 %%
   int lin_ini_com;	
@@ -24,12 +25,21 @@ WHITESPACE      [\t' '\n\r]
 <comentario>[^*\n]* 
 <comentario>"*"+[^/\n]
 <comentario><<EOF>> {
-	fprintf(stdout,"ERRO: comentario da linha %d",lin_ini_com);  
-	fprintf(stderr,"nao termina\n");
+	fprintf(stdout,"ERRO: COMENTARIO NAO TERMINA");  
 	return(EOF);
 }
 <comentario>\n
 <comentario>"*"+"/" {BEGIN(INITIAL);} 
+
+\" {BEGIN(cadeiaCaractere); lin_ini_com = yylineno;
+       fprintf(stdout,"cadeia de caractere\n");
+      }
+<cadeiaCaractere>\n {
+	fprintf(stdout,"ERRO: CADEIA DE CARACTERES OCUPA MAIS DE UMA LINHA");  
+	return(EOF);
+}
+<cadeiaCaractere>\" {return CADEIA; BEGIN(INITIAL);} 
+
 {WHITESPACE}+ 		 
 "car"   {printf("%s - %d",yytext,CAR);return CAR;}
 "int"   {printf("%s - %d",yytext,INT);return INT;}
@@ -65,6 +75,5 @@ WHITESPACE      [\t' '\n\r]
 "}"	{printf("%s - %d",yytext,FC);return FC;}
 ("_"|{CARACTER})({DIGIT}*|{CARACTER}*|"_"*)*	{printf("%s - %d",yytext,ID);return ID;}
 {DIGIT}+	{printf("%s - %d",yytext,NUM);return NUM;}
-.	{printf("ERRO");}
+.	{printf("ERRO: CARACTERE INVALIDO");return(EOF);}
 %%
-

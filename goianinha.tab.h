@@ -79,7 +79,8 @@ extern int yydebug;
     DIV = 289,
     EXCL = 290,
     NUM = 291,
-    PROGRAMA = 292
+    PROGRAMA = 292,
+    CADEIA = 293
   };
 #endif
 
