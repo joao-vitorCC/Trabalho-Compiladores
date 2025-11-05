@@ -1,14 +1,21 @@
 %{
 #include<stdio.h>
 #include"lex.yy.h"
+#include"ast.h"
 extern int yylex();
-FILE *yyin;
+//FILE *yyin;
 void yyerror(char const *);
 extern int yylineno;
+struct no * ast = NULL;
 %}
+
+%union{
+	struct no *	no;
+	char * str;
+}
 %start programa
-%token INT
-%token ID
+%token <str> INT
+%token <str> ID
 %token PV
 %token V
 %token AP
@@ -19,7 +26,7 @@ extern int yylineno;
 %token RETORNE
 %token LEIA
 %token ESCREVA
-%token CADEIACARACTER
+%token <str> CADEIACARACTER
 %token NOVALINHA
 %token SE
 %token ENTAO
@@ -42,22 +49,30 @@ extern int yylineno;
 %token EXCL
 %token NUM
 %token PROGRAMA
+%token <str> CADEIA
+%type<no> programa declfunvar declprog declvar declfunc listaparametros bloco
+%type<no> listadeclvar tipo listacomando comando expr orexpr andexpr eqexpr
+%type<no> desigexpr addexpr mulexpr unexpr primexpr listexpr
 %%
-programa: declfunvar declprog {printf("l1");};
+programa: declfunvar declprog {
+								$$ = $2;
+								ast = $$;
+								printf("No Raiz");
+								};
 declfunvar: tipo ID declvar PV declfunvar| tipo ID declfunc declfunvar | ;
 declprog: PROGRAMA bloco;
 declvar: V ID declvar | ;
 declfunc: AP listaparametros FP bloco ;
-listaparametros: | listaparametroscont ;
+listaparametros:  | listaparametroscont ;
 listaparametroscont: tipo ID| tipo ID V listaparametroscont ;
 bloco: AC listadeclvar listacomando FC | AC listadeclvar FC;
 listadeclvar: | tipo ID declvar PV listadeclvar;
-tipo: INT | CAR; 
+tipo: INT {$$ = criaNo(tipoInt,"","int");printf("no Int\n");}| CAR {$$ = criaNo(tipoInt,"","car");printf("no CAR\n");}; 
 listacomando: comando | comando listacomando;
 comando: PV | expr PV | RETORNE expr PV | LEIA lvalueexpr PV | ESCREVA expr PV 
 | ESCREVA CADEIACARACTER PV | NOVALINHA PV | SE AP expr FP ENTAO comando |
 SE AP expr FP ENTAO comando SENAO comando | ENQUANTO AP expr FP EXECUTE comando | bloco;
-expr: orexpr ;//| lvalueexpr ATRIB asignexpr;
+expr: orexpr ;| lvalueexpr ATRIB expr;
 orexpr: orexpr OU andexpr | andexpr;
 andexpr: andexpr E eqexpr | eqexpr;
 eqexpr: eqexpr EQUAL desigexpr | eqexpr DIF desigexpr | desigexpr;
@@ -67,16 +82,16 @@ addexpr: addexpr SUM mulexpr | addexpr SUB mulexpr | mulexpr;
 mulexpr: mulexpr MUL unexpr | mulexpr DIV unexpr | unexpr;
 unexpr: SUB primexpr | EXCL primexpr | primexpr;
 lvalueexpr: ID;
-primexpr: ID AP listexpr FP | ID AP FP | ID | AP expr FP | NUM ;
+primexpr: ID AP listexpr FP | ID AP FP | ID | CADEIA |AP expr FP | NUM ;
 listexpr: expr | listexpr V expr;
 %%
 void yyerror(char const* msg){
-printf("%s -- Linha %d\n",msg, yylineno); 
+	printf("%s -- Linha %d\n",msg, yylineno); 
 }
 
 int main(int argc, char**argv){
      if(argc!=2){
-          printf("Uso correto: calc <nome> \n");
+          printf("Uso correto: goianinha <nome> \n");
           exit(1);
      }
      yyin=fopen(argv[1],"rt");
