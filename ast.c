@@ -1,21 +1,7 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
-enum tiposNo{
-	programa,
-	declFuncV,
-	declP
-};
-struct no{
-	enum tiposNo t;
-	char nome[10000]; 
-	char valor[10000]; 
-	struct no *f1;
-	struct no* f2;
-	struct no *f3;
-	struct no * proximo;
-	
-};
+#include"ast.h"
 struct no * criaNo(enum tiposNo t, char nome[],char valor[]){
 	struct no * novo;
 	novo = (struct no *)malloc(sizeof(struct no));
@@ -28,7 +14,7 @@ struct no * criaNo(enum tiposNo t, char nome[],char valor[]){
 	novo->proximo = NULL;
 return novo;	
 }
-int main(){
+/*int main(){
 	struct no * n1;
 	enum tiposNo t1 = programa;
 	
@@ -36,4 +22,4 @@ int main(){
 	printf("%d %s %s",n1->t,n1->nome,n1->valor);
 
 return 0; 
-}
+}*/
