@@ -1,13 +1,33 @@
-all:
-	flex goianinha.l
 
-	bison goianinha.y
+# Variáveis
+CC = gcc
+CFLAGS = -Wall
 
-	gcc -c lex.yy.c
 
-	gcc -c goianinha.tab.c
+# Alvo principal
+goianinha: goianinha.tab.o lex.yy.o ast.o
+	$(CC) $(CFLAGS) -o goianinha lex.yy.o goianinha.tab.o ast.o
+
+# flex
+lex.yy.c: goianinha.l
+	flex  --yylineno goianinha.l
 	
-	gcc -g -Wall -ansi -lm lex.yy.o goianinha.tab.o -o goianinha
+# bison
+goianinha.tab.c: goianinha.y
+	bison -d goianinha.y
 
+# Compilação dos arquivos objeto
+lex.yy.o: lex.yy.c
+	$(CC) $(CFLAGS) -c lex.yy.c
 
+goianinha.tab.o: goianinha.tab.c
+	$(CC) $(CFLAGS) -c goianinha.tab.c
+	
+ast.o: goianinha.tab.c
+	$(CC) $(CFLAGS) -c ast.c	
 
+# Limpeza dos arquivos gerados
+clean:
+	rm -f *.o main
+
+	
