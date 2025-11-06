@@ -6,6 +6,7 @@ extern int yylex();
 //FILE *yyin;
 void yyerror(char const *);
 extern int yylineno;
+extern char * yytext;
 struct no * ast = NULL;
 %}
 
@@ -50,16 +51,21 @@ struct no * ast = NULL;
 %token NUM
 %token PROGRAMA
 %token <str> CADEIA
+%type<str> tipo
 %type<no> programa declfunvar declprog declvar declfunc listaparametros bloco
-%type<no> listadeclvar tipo listacomando comando expr orexpr andexpr eqexpr
+%type<no> listadeclvarlistacomando comando expr orexpr andexpr eqexpr
 %type<no> desigexpr addexpr mulexpr unexpr primexpr listexpr
 %%
 programa: declfunvar declprog {
-								$$ = $2;
-								ast = $$;
-								printf("No Raiz");
-								};
-declfunvar: tipo ID declvar PV declfunvar| tipo ID declfunc declfunvar | ;
+					$$ = $2;
+					ast = $$;
+					printf("No Raiz");
+				};
+declfunvar: tipo ID declvar PV declfunvar{
+					$$ = criaNo(declFuncV,$2,$1,$3,NULL,NULL,$5);printf("no declFunvar\n");
+				};
+	
+| tipo ID declfunc declfunvar | ;
 declprog: PROGRAMA bloco;
 declvar: V ID declvar | ;
 declfunc: AP listaparametros FP bloco ;
@@ -67,7 +73,12 @@ listaparametros:  | listaparametroscont ;
 listaparametroscont: tipo ID| tipo ID V listaparametroscont ;
 bloco: AC listadeclvar listacomando FC | AC listadeclvar FC;
 listadeclvar: | tipo ID declvar PV listadeclvar;
-tipo: INT {$$ = criaNo(tipoInt,"","int");printf("no Int\n");}| CAR {$$ = criaNo(tipoInt,"","car");printf("no CAR\n");}; 
+tipo: INT {
+		$$ = "int";printf("no Int\n");
+	}
+	| CAR {
+		$$ = "car";printf("no CAR\n");
+	}; 
 listacomando: comando | comando listacomando;
 comando: PV | expr PV | RETORNE expr PV | LEIA lvalueexpr PV | ESCREVA expr PV 
 | ESCREVA CADEIACARACTER PV | NOVALINHA PV | SE AP expr FP ENTAO comando |

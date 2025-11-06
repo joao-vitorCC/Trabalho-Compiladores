@@ -53,4 +53,4 @@ struct no{
 	struct no * proximo;
 	
 };
-struct no * criaNo(enum tiposNo t, char nome[],char valor[]);
+struct no * criaNo(enum tiposNo t, char nome[],char valor[],struct no * f1,struct no * f2,struct no * f3,struct no * prox);
