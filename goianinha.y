@@ -52,6 +52,7 @@ struct no * ast = NULL;
 %token PROGRAMA
 %token <str> CADEIA
 %type<str> tipo
+%type<str> lvalueexpr
 %type<no> programa declfunvar declprog declvar declfunc listaparametros bloco
 %type<no> listadeclvarlistacomando comando expr orexpr andexpr eqexpr
 %type<no> desigexpr addexpr mulexpr unexpr primexpr listexpr
@@ -60,12 +61,10 @@ programa: declfunvar declprog {
 					$$ = $2;
 					ast = $$;
 					printf("No Raiz");
-				};
-declfunvar: tipo ID declvar PV declfunvar{
-					$$ = criaNo(declFuncV,$2,$1,$3,NULL,NULL,$5);printf("no declFunvar\n");
-				};
-	
-| tipo ID declfunc declfunvar | ;
+				}
+declfunvar: tipo ID declvar PV declfunvar
+| tipo ID declfunc declfunvar
+|;
 declprog: PROGRAMA bloco;
 declvar: V ID declvar | ;
 declfunc: AP listaparametros FP bloco ;
@@ -74,10 +73,12 @@ listaparametroscont: tipo ID| tipo ID V listaparametroscont ;
 bloco: AC listadeclvar listacomando FC | AC listadeclvar FC;
 listadeclvar: | tipo ID declvar PV listadeclvar;
 tipo: INT {
-		$$ = "int";printf("no Int\n");
+		$$ = yytext;
+		printf("no Int -- %s\n",yytext);
 	}
 	| CAR {
-		$$ = "car";printf("no CAR\n");
+		$$ = yytext;
+		printf("no CAR -- %s\n",yytext);
 	}; 
 listacomando: comando | comando listacomando;
 comando: PV | expr PV | RETORNE expr PV | LEIA lvalueexpr PV | ESCREVA expr PV 
@@ -92,8 +93,11 @@ desigexpr: desigexpr MENOR addexpr | desigexpr MAIOR addexpr | desigexpr MAIOREQ
 addexpr: addexpr SUM mulexpr | addexpr SUB mulexpr | mulexpr;
 mulexpr: mulexpr MUL unexpr | mulexpr DIV unexpr | unexpr;
 unexpr: SUB primexpr | EXCL primexpr | primexpr;
-lvalueexpr: ID;
-primexpr: ID AP listexpr FP | ID AP FP | ID | CADEIA |AP expr FP | NUM ;
+lvalueexpr: ID {
+					$$ = yytext;
+					printf("no lvalueexpr %s\n",yytext);
+				};
+primexpr: ID AP listexpr FP | ID AP FP {$$ = criaNo(exprChamaFuncSParam,"id","",NULL,NULL,NULL,NULL);} | ID {$$ = criaNo(exprVar,"id","",NULL,NULL,NULL,NULL);}| CADEIA |AP expr FP | NUM ;
 listexpr: expr | listexpr V expr;
 %%
 void yyerror(char const* msg){

@@ -1,1 +1,11 @@
-programa{}
+int h;
+car calc(){
+int j;
+se(x ou y) entao
+enquanto(x==y e z) execute 
+leia k;
+}
+programa{
+int m;
+calc();
+}

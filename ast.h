@@ -3,7 +3,8 @@
 #endif
 enum tiposNo{
 	programa,
-	declFuncV,
+	declFuncVV,
+	declFuncVF,
 	declP,
 	declV,
 	declF,
