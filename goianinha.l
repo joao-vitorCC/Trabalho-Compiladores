@@ -34,11 +34,12 @@ WHITESPACE      [\t' '\n\r]
 \" {BEGIN(cadeiaCaractere); lin_ini_com = yylineno;
        fprintf(stdout,"cadeia de caractere\n");
       }
+<cadeiaCaractere>[^\"\n]*+\" {yylval.str= strdup(yytext); BEGIN(INITIAL);return CADEIA; }
 <cadeiaCaractere>\n {
 	fprintf(stdout,"ERRO: CADEIA DE CARACTERES OCUPA MAIS DE UMA LINHA");  
 	return(EOF);
 }
-<cadeiaCaractere>\" {return CADEIA; BEGIN(INITIAL);} 
+
 
 {WHITESPACE}+ 		 
 "car"   {printf("%s - %d",yytext,CAR);return CAR;}
@@ -73,7 +74,7 @@ WHITESPACE      [\t' '\n\r]
 "ou"	{printf("%s - %d",yytext,OU);return OU;}
 "{"	{printf("%s - %d",yytext,AC);return AC;}
 "}"	{printf("%s - %d",yytext,FC);return FC;}
-("_"|{CARACTER})({DIGIT}*|{CARACTER}*|"_"*)*	{printf("%s - %d",yytext,ID);return ID;}
-{DIGIT}+	{printf("%s - %d",yytext,NUM);return NUM;}
+("_"|{CARACTER})({DIGIT}*|{CARACTER}*|"_"*)*	{printf("%s - %d",yytext,ID);yylval.str= strdup(yytext);return ID;}
+{DIGIT}+	{printf("%s - %d",yytext,NUM);yylval.str= strdup(yytext);return NUM;}
 .	{printf("ERRO: CARACTERE INVALIDO");return(EOF);}
 %%
