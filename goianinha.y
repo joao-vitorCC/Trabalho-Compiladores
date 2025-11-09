@@ -8,10 +8,11 @@ void yyerror(char const *);
 extern int yylineno;
 extern char * yytext;
 struct no * ast = NULL;
+
 %}
 
 %union{
-	struct no *	no;
+	struct no * no;
 	char * str;
 }
 %start programa
@@ -48,14 +49,14 @@ struct no * ast = NULL;
 %token MUL
 %token DIV
 %token EXCL
-%token NUM
+%token <str> NUM
 %token PROGRAMA
 %token <str> CADEIA
 %type<str> tipo
 %type<str> lvalueexpr
 %type<no> programa declfunvar declprog declvar declfunc listaparametros bloco
-%type<no> listadeclvarlistacomando comando expr orexpr andexpr eqexpr
-%type<no> desigexpr addexpr mulexpr unexpr primexpr listexpr
+%type<no> listadeclvar listacomando comando expr orexpr andexpr eqexpr
+%type<no> desigexpr addexpr mulexpr unexpr primexpr listexpr 
 %%
 programa: declfunvar declprog {
 					$$ = $2;
@@ -73,18 +74,18 @@ listaparametroscont: tipo ID| tipo ID V listaparametroscont ;
 bloco: AC listadeclvar listacomando FC | AC listadeclvar FC;
 listadeclvar: | tipo ID declvar PV listadeclvar;
 tipo: INT {
-		$$ = yytext;
+		$$ = "int";
 		printf("no Int -- %s\n",yytext);
 	}
 	| CAR {
-		$$ = yytext;
+		$$ = "car";
 		printf("no CAR -- %s\n",yytext);
 	}; 
 listacomando: comando | comando listacomando;
 comando: PV | expr PV | RETORNE expr PV | LEIA lvalueexpr PV | ESCREVA expr PV 
 | ESCREVA CADEIACARACTER PV | NOVALINHA PV | SE AP expr FP ENTAO comando |
 SE AP expr FP ENTAO comando SENAO comando | ENQUANTO AP expr FP EXECUTE comando | bloco;
-expr: orexpr ;| lvalueexpr ATRIB expr;
+expr: orexpr | lvalueexpr ATRIB expr;
 orexpr: orexpr OU andexpr | andexpr;
 andexpr: andexpr E eqexpr | eqexpr;
 eqexpr: eqexpr EQUAL desigexpr | eqexpr DIF desigexpr | desigexpr;
@@ -94,10 +95,50 @@ addexpr: addexpr SUM mulexpr | addexpr SUB mulexpr | mulexpr;
 mulexpr: mulexpr MUL unexpr | mulexpr DIV unexpr | unexpr;
 unexpr: SUB primexpr | EXCL primexpr | primexpr;
 lvalueexpr: ID {
-					$$ = yytext;
-					printf("no lvalueexpr %s\n",yytext);
+					$$ = $1;
+					printf("no lvalueexpr %s\n",$$);
+					free($1);					
 				};
-primexpr: ID AP listexpr FP | ID AP FP {$$ = criaNo(exprChamaFuncSParam,"id","",NULL,NULL,NULL,NULL);} | ID {$$ = criaNo(exprVar,"id","",NULL,NULL,NULL,NULL);}| CADEIA |AP expr FP | NUM ;
+primexpr: ID AP listexpr FP {
+						if($1 != NULL){
+							$$ = criaNo(exprChamaFuncParam,$1,"",$3,NULL,NULL,NULL);
+							printf("no funcao sem parametro **%s**",$1);
+							free($1);
+						 }	
+						}
+
+| ID AP FP {
+					if($1 != NULL){
+						$$ = criaNo(exprChamaFuncSParam,$1,"",NULL,NULL,NULL,NULL);
+						printf("no funcao sem parametro **%s**",$1);
+						free($1);
+					}
+} 
+| ID {
+		if($1 != NULL){
+			$$ = criaNo(exprVar,$1,"",NULL,NULL,NULL,NULL);
+			printf("no variavel **%s**",$1);
+			free($1);
+		}
+     }
+| CADEIA{
+			if($1 != NULL){
+				printf("no Cadeia **%s**\n",$1);
+				$$ = criaNo(exprCadeiaConst,"",$1,NULL,NULL,NULL,NULL);
+				free($1);
+			}
+		} 
+
+|AP expr FP 
+
+| NUM{
+			if($1 != NULL){
+			printf("no numero **%s**\n",$1);
+			$$ = criaNo(exprIntConst,"",$1,NULL,NULL,NULL,NULL);
+			free($1);
+			}
+   };
+	
 listexpr: expr | listexpr V expr;
 %%
 void yyerror(char const* msg){
