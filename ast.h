@@ -3,8 +3,7 @@
 #endif
 enum tiposNo{
 	programa,
-	declFuncVV,
-	declFuncVF,
+	declFuncV,
 	declP,
 	declV,
 	declF,
@@ -42,7 +41,16 @@ enum tiposNo{
 	exprVar,
 	exprCadeiaConst,
 	exprIntConst,
-	exprParen
+	exprParen,
+	primExpr,
+	unexpr,
+	mulexpr,
+	addexpr,
+	desigexpr,
+	eqexpr,
+	andexpr,
+	orexpr,
+	lvalueexpr,
 };
 struct no{
 	enum tiposNo t;
