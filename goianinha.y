@@ -56,23 +56,73 @@ struct no * ast = NULL;
 %type<no> lvalueexpr
 %type<no> programa declfunvar declprog declvar declfunc listaparametros bloco
 %type<no> listadeclvar listacomando comando expr orexpr andexpr eqexpr
-%type<no> desigexpr addexpr mulexpr unexpr primexpr listexpr 
+%type<no> desigexpr addexpr mulexpr unexpr primexpr listexpr listaparametroscont
 %%
 programa: declfunvar declprog {
-					$$ = $2;
+					$$ = criaNo(programa,"","",$1,$2,NULL,NULL);
 					ast = $$;
 					printf("No Raiz");
 				}
-declfunvar: tipo ID declvar PV declfunvar
-| tipo ID declfunc declfunvar
-|;
-declprog: PROGRAMA bloco;
-declvar: V ID declvar | ;
-declfunc: AP listaparametros FP bloco ;
-listaparametros:  | listaparametroscont ;
-listaparametroscont: tipo ID| tipo ID V listaparametroscont ;
-bloco: AC listadeclvar listacomando FC | AC listadeclvar FC;
-listadeclvar: | tipo ID declvar PV listadeclvar;
+declfunvar: tipo ID declvar PV declfunvar{
+											$$ = criaNo(declFuncVV,$2,$1,$3,NULL,NULL,$5);
+											printf("no bloco declfunvar variavel\n");
+}
+|tipo ID declfunc declfunvar{
+							$$ = criaNo(declFuncVF,$2,$1,$3,NULL,NULL,$4);
+							printf("no bloco declfunvar funcao\n");
+}
+|{
+	$$ = NULL;
+};
+declprog: PROGRAMA bloco{
+						 $$ = criaNo(declP,"","",$2,NULL,NULL,NULL);
+						printf("no bloco decl programa\n");
+};
+declvar: V ID declvar{
+					 $$ = criaNo(declV,$2,"",NULL,NULL,NULL,$3);
+					printf("no bloco decl var\n");
+}
+|{
+	$$ = NULL;
+};
+declfunc: AP listaparametros FP bloco {
+										$$ = criaNo(declF,"","",$2,$4,NULL,NULL);
+										printf("no bloco decl fun\n");
+};
+listaparametros:{
+				$$ = NULL;
+}
+| listaparametroscont{
+					$$ = criaNo(listaParam,"","",$1,NULL,NULL,NULL);
+					printf("no bloco lista parametro\n");	
+} ;
+listaparametroscont: tipo ID{
+							$$ = criaNo(listaParUni,$2,$1,NULL,NULL,NULL,NULL);
+							printf("no lista parametro cont unico **%s** -- **%s**\n",$2,$1);
+}
+|tipo ID V listaparametroscont{
+								if($1 != NULL && $2 != NULL){
+									$$ = criaNo(listaPar,$2,$1,NULL,NULL,NULL,$4);
+									printf("no lista parametros cont **%s** -- **%s**\n",$2,$1);
+								}
+};
+bloco: AC listadeclvar listacomando FC{
+										$$ = criaNo(blocoVC,"","",$2,$3,NULL,NULL);
+										printf("no bloco declVar e declComan\n");
+}
+| AC listadeclvar FC{
+					$$ = criaNo(blocoV,"","",$2,NULL,NULL,NULL);
+					printf("no bloco declVar\n");
+};
+listadeclvar: {
+				$$ = NULL;
+}
+|tipo ID declvar PV listadeclvar{
+								if($1 != NULL && $2 != NULL){
+									$$ = criaNo(listaDeclV,$2,$1,$3,NULL,NULL,$5); //o tipo é o valor 
+			    					printf("no lista declaracao var **%s** -- **%s**\n",$1,$2);
+	        					}
+};
 tipo: INT {
 		$$ = "int";
 		printf("no Int -- %s\n",yytext);
@@ -81,10 +131,59 @@ tipo: INT {
 		$$ = "car";
 		printf("no CAR -- %s\n",yytext);
 	}; 
-listacomando: comando | comando listacomando;
-comando: PV | expr PV | RETORNE expr PV | LEIA lvalueexpr PV | ESCREVA expr PV 
-| ESCREVA CADEIACARACTER PV | NOVALINHA PV | SE AP expr FP ENTAO comando |
-SE AP expr FP ENTAO comando SENAO comando | ENQUANTO AP expr FP EXECUTE comando | bloco;
+listacomando: comando {
+						$$ = criaNo(listaComUn,"","",$1,NULL,NULL,NULL);
+	        			printf("no listacomando unico\n");
+}
+| comando listacomando{
+						$$ = criaNo(listaCom,"","",$1,NULL,NULL,$2);
+	        			printf("no listacomando\n");
+};
+comando: PV{
+			  $$ = NULL;
+			}
+| expr PV{
+			$$ = criaNo(comanExpr,"","",$1,NULL,NULL,NULL);
+	        printf("no comando expr\n");
+		} 
+| RETORNE expr PV{
+					$$ = criaNo(comanRet,"","",$2,NULL,NULL,NULL);
+	            	printf("no comando retorne expr\n");
+				} 
+| LEIA lvalueexpr PV{
+		   $$ = criaNo(comanLeia,"","",$2,NULL,NULL,NULL);
+	           printf("no comando ler var \n");
+}
+| ESCREVA expr PV {
+		    $$ = criaNo(comanEscrevaExp,"","",$2,NULL,NULL,NULL);
+	           printf("no comando escreva expressao \n");
+}
+| ESCREVA CADEIACARACTER PV {
+			     if($2!= NULL){
+						$$ = criaNo(comanEscrevaCadeia,"",$2,NULL,NULL,NULL,NULL);
+					   	printf("no comando escreva cadeia \n");
+	           	    }	
+			   }
+| NOVALINHA PV{
+		  $$ = criaNo(comanLinha,"","",NULL,NULL,NULL,NULL);
+	           printf("no comando novalinha \n");
+}
+| SE AP expr FP ENTAO comando{
+				   $$ = criaNo(comanSe,"","",$3,$6,NULL,NULL);
+				   printf("no comando se \n");
+}
+|SE AP expr FP ENTAO comando SENAO comando{
+					   $$ = criaNo(comanSeSenao,"","",$3,$6,$8,NULL);
+				   	  printf("no comando se senao \n");
+} 
+| ENQUANTO AP expr FP EXECUTE comando{
+				     $$ = criaNo(comanEnquanto,"","",$3,$6,NULL,NULL);
+				     printf("no comando enquanto \n");
+} 
+| bloco{
+	$$ = criaNo(comanBloco,"","",$1,NULL,NULL,NULL);
+	printf("no comando bloco\n");
+};
 expr: orexpr{
 			$$ = criaNo(orexpr,"","",$1,NULL,NULL,NULL);
 			printf("no orexpr\n");
