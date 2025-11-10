@@ -53,7 +53,7 @@ struct no * ast = NULL;
 %token PROGRAMA
 %token <str> CADEIA
 %type<str> tipo
-%type<str> lvalueexpr
+%type<no> lvalueexpr
 %type<no> programa declfunvar declprog declvar declfunc listaparametros bloco
 %type<no> listadeclvar listacomando comando expr orexpr andexpr eqexpr
 %type<no> desigexpr addexpr mulexpr unexpr primexpr listexpr 
@@ -85,19 +85,105 @@ listacomando: comando | comando listacomando;
 comando: PV | expr PV | RETORNE expr PV | LEIA lvalueexpr PV | ESCREVA expr PV 
 | ESCREVA CADEIACARACTER PV | NOVALINHA PV | SE AP expr FP ENTAO comando |
 SE AP expr FP ENTAO comando SENAO comando | ENQUANTO AP expr FP EXECUTE comando | bloco;
-expr: orexpr | lvalueexpr ATRIB expr;
-orexpr: orexpr OU andexpr | andexpr;
-andexpr: andexpr E eqexpr | eqexpr;
-eqexpr: eqexpr EQUAL desigexpr | eqexpr DIF desigexpr | desigexpr;
-desigexpr: desigexpr MENOR addexpr | desigexpr MAIOR addexpr | desigexpr MAIOREQUAL addexpr
-| desigexpr MENOREQUAL addexpr | addexpr;
-addexpr: addexpr SUM mulexpr | addexpr SUB mulexpr | mulexpr;
-mulexpr: mulexpr MUL unexpr | mulexpr DIV unexpr | unexpr;
-unexpr: SUB primexpr | EXCL primexpr | primexpr;
+expr: orexpr{
+			$$ = criaNo(orexpr,"","",$1,NULL,NULL,NULL);
+			printf("no orexpr\n");
+} 			
+| lvalueexpr ATRIB expr{
+						$$ = criaNo(exprAtrib,"","",$1,$3,NULL,NULL);
+						printf("no atribuicao \n");	
+};
+orexpr: orexpr OU andexpr{
+						$$ = criaNo(exprOr,"","",$1,$3,NULL,NULL);
+						printf("no or \n");
+} 
+| andexpr{
+		$$ = criaNo(andexpr,"","",$1,NULL,NULL,NULL);
+		printf("no andexpr\n");	
+};
+andexpr: andexpr E eqexpr{
+						$$ = criaNo(exprAnd,"","",$1,$3,NULL,NULL);
+						printf("no and \n");
+} 
+| eqexpr{
+		$$ = criaNo(eqexpr,"","",$1,NULL,NULL,NULL);
+			printf("no eqexpr\n");
+};
+eqexpr: eqexpr EQUAL desigexpr{
+								$$ = criaNo(exprEq,"","",$1,$3,NULL,NULL);
+								printf("no igual\n");
+} 
+| eqexpr DIF desigexpr{
+						$$ = criaNo(exprDif,"","",$1,$3,NULL,NULL);
+						printf("no diferente\n");
+} 
+| desigexpr{
+			$$ = criaNo(desigexpr,"","",$1,NULL,NULL,NULL);
+			printf("no desigexpr\n");
+};
+desigexpr: desigexpr MENOR addexpr{
+									$$ = criaNo(exprMenor,"","",$1,$3,NULL,NULL);
+						  		printf("no menor\n");
+}
+| desigexpr MAIOR addexpr{
+							$$ = criaNo(exprMaior,"","",$1,$3,NULL,NULL);
+						  		printf("no maior\n");
+} 
+| desigexpr MAIOREQUAL addexpr{
+								$$ = criaNo(exprMaiorEq,"","",$1,$3,NULL,NULL);
+						  		printf("no maior igual\n");
+}
+| desigexpr MENOREQUAL addexpr{
+								$$ = criaNo(exprMenorEq,"","",$1,$3,NULL,NULL);
+						  		printf("no menor igual\n");
+} 
+| addexpr{
+			$$ = criaNo(addexpr,"","",$1,NULL,NULL,NULL);
+			printf("no addexpr\n");
+};
+addexpr: addexpr SUM mulexpr{
+								 $$ = criaNo(exprAdicao,"","",$1,$3,NULL,NULL);
+						  		printf("no adicao\n");
+							} 
+| addexpr SUB mulexpr{
+						  $$ = criaNo(exprSubtracao,"","",$1,$3,NULL,NULL);
+						  printf("no subtracao\n");
+					} 
+
+| mulexpr{
+		  $$ = criaNo(mulexpr,"","",$1,NULL,NULL,NULL);
+			printf("no mulexpr\n");
+};
+mulexpr: mulexpr MUL unexpr{
+							$$ = criaNo(exprMult,"","",$1,$3,NULL,NULL);
+							printf("no multiplicacao expr\n");
+							} 
+| mulexpr DIV unexpr {
+						$$ = criaNo(exprDiv,"","",$1,$3,NULL,NULL);
+						printf("no divisao expr\n");	
+					}
+| unexpr{
+		$$ = criaNo(unexpr,"","",$1,NULL,NULL,NULL);
+		printf("no unexpr\n");	
+};
+unexpr: SUB primexpr {
+						$$ = criaNo(exprInv,"","",$2,NULL,NULL,NULL);
+						printf("no iverte sinal expr\n");	
+					 }
+| EXCL primexpr {
+					$$ = criaNo(exprNeg,"","",$2,NULL,NULL,NULL);
+					printf("no negacao expr\n");	
+				}
+| primexpr{
+			$$ = criaNo(primExpr,"","",$1,NULL,NULL,NULL);
+			printf("no primExpr\n");
+};
 lvalueexpr: ID {
-					$$ = $1;
-					printf("no lvalueexpr %s\n",$$);
-					free($1);					
+					if($1 != NULL){
+						$$ = criaNo(lvalueexpr,$1,"",NULL,NULL,NULL,NULL);
+						printf("no lvalueexpr %s\n",$$->nome);
+						free($1);
+					}					
 				};
 primexpr: ID AP listexpr FP {
 						if($1 != NULL){
@@ -129,7 +215,11 @@ primexpr: ID AP listexpr FP {
 			}
 		} 
 
-|AP expr FP 
+|AP expr FP {
+				printf("no (expr)\n");
+				$$ = criaNo(exprParen,"","",$2,NULL,NULL,NULL);
+
+}
 
 | NUM{
 			if($1 != NULL){
