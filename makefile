@@ -5,8 +5,8 @@ CFLAGS = -Wall
 
 
 # Alvo principal
-goianinha: goianinha.tab.o lex.yy.o ast.o main.o
-	$(CC) $(CFLAGS) -o goianinha lex.yy.o goianinha.tab.o ast.o main.o
+goianinha: goianinha.tab.o lex.yy.o ast.o main.o tabela-simb.o
+	$(CC) $(CFLAGS) -o goianinha lex.yy.o goianinha.tab.o ast.o main.o tabela-simb.o
 
 # flex
 lex.yy.c: goianinha.l
@@ -28,6 +28,9 @@ ast.o: ast.c
 
 main.o: main.c
 	$(CC) $(CFLAGS) -c main.c
+
+tabela-simb.o: tabela-simb.c
+	$(CC) $(CFLAGS) -c tabela-simb.c
 
 # Limpeza dos arquivos gerados
 clean:

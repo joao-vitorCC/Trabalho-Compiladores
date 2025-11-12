@@ -47,7 +47,7 @@ WHITESPACE      [\t' '\n\r]
 	return CAR;
 }
 "int"   {
-	printf("%s - %d",yytext,INT);
+	//printf("%s - %d",yytext,INT);
 	return INT;
 }
 "programa" {
