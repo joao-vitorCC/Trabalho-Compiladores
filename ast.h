@@ -58,6 +58,8 @@ enum tiposNo{
 	andexpr,
 	orexpr,
 	lvalueexpr,
+	listexprS,
+	listexprU
 };
 struct no{
 	enum tiposNo t;

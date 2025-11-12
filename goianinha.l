@@ -18,8 +18,8 @@ WHITESPACE      [\t' '\n\r]
 %x cadeiaCaractere
 
 %%
-  int lin_ini_com;	
-"/*" {BEGIN(comentario); lin_ini_com = yylineno;
+ 	
+"/*" {BEGIN(comentario); 
        fprintf(stdout,"comentario na linha %d\n",yylineno);
       }
 <comentario>[^*\n]* 
@@ -31,50 +31,157 @@ WHITESPACE      [\t' '\n\r]
 <comentario>\n
 <comentario>"*"+"/" {BEGIN(INITIAL);} 
 
-\" {BEGIN(cadeiaCaractere); lin_ini_com = yylineno;
+\" {BEGIN(cadeiaCaractere); 
        fprintf(stdout,"cadeia de caractere\n");
       }
 <cadeiaCaractere>[^\"\n]*+\" {yylval.str= strdup(yytext); BEGIN(INITIAL);return CADEIA; }
 <cadeiaCaractere>\n {
-	fprintf(stdout,"ERRO: CADEIA DE CARACTERES OCUPA MAIS DE UMA LINHA");  
+	fprintf(stdout,"ERRO: CADEIA DE CARACTERES OCUPA MAIS DE UMA LINHA %d\n",yylineno);  
 	return(EOF);
 }
 
 
 {WHITESPACE}+ 		 
-"car"   {printf("%s - %d",yytext,CAR);return CAR;}
-"int"   {printf("%s - %d",yytext,INT);return INT;}
-"programa" {printf("%s - %d",yytext,PROGRAMA);return PROGRAMA;}
-"retorne" {printf("%s - %d",yytext,RETORNE);return RETORNE;}
-"leia"	{printf("%s - %d",yytext,LEIA);return LEIA;}
-"escreva"	{printf("%s - %d",yytext,ESCREVA);return ESCREVA;}
-"novalinha" {printf("%s - %d",yytext,NOVALINHA);return NOVALINHA;}
-"se"	{printf("%s - %d",yytext,SE);return SE;}
-"entao"	{printf("%s - %d",yytext,ENTAO);return ENTAO;}
-"senao"	{printf("%s - %d",yytext,SENAO);return SENAO;}
-"enquanto"	{printf("%s - %d",yytext,ENQUANTO);return ENQUANTO;}
-"execute"	{printf("%s - %d",yytext,EXECUTE);return EXECUTE;}
-";"	{printf("%s - %d",yytext,PV);return PV;}
-"," 	{printf("%s - %d",yytext,V);return V;}
-"("	{printf("%s - %d",yytext,AP);return AP;}
-")"	{printf("%s - %d",yytext,FP);return FP;}
-"="	{printf("%s - %d",yytext,ATRIB);return ATRIB;}
-"=="	{printf("%s - %d",yytext,EQUAL);return EQUAL;}
-"!="	{printf("%s - %d",yytext,DIF);return DIF;}
-">"	{printf("%s - %d",yytext,MAIOR);return MAIOR;}
-"<"	{printf("%s - %d",yytext,MENOR);return MENOR;}
-">="	{printf("%s - %d",yytext,MAIOREQUAL);return MAIOREQUAL;}
-"<="	{printf("%s - %d",yytext,MENOREQUAL);return MENOREQUAL;}
-"+"	{printf("%s - %d",yytext,SUM);return SUM;}
-"-"	{printf("%s - %d",yytext,SUB);return SUB;}
-"*"	{printf("%s - %d",yytext,MUL);return MUL;}
-"/"	{printf("%s - %d",yytext,DIV);return DIV;}
-"!"	{printf("%s - %d",yytext,EXCL);return EXCL;}
-"e"	{printf("%s - %d",yytext,E);return E;}
-"ou"	{printf("%s - %d",yytext,OU);return OU;}
-"{"	{printf("%s - %d",yytext,AC);return AC;}
-"}"	{printf("%s - %d",yytext,FC);return FC;}
-("_"|{CARACTER})({DIGIT}*|{CARACTER}*|"_"*)*	{printf("%s - %d",yytext,ID);yylval.str= strdup(yytext);return ID;}
-{DIGIT}+	{printf("%s - %d",yytext,NUM);yylval.str= strdup(yytext);return NUM;}
-.	{printf("ERRO: CARACTERE INVALIDO");return(EOF);}
+"car"   {
+	//printf("%s - %d",yytext,CAR);
+	return CAR;
+}
+"int"   {
+	printf("%s - %d",yytext,INT);
+	return INT;
+}
+"programa" {
+	//printf("%s - %d",yytext,PROGRAMA);
+	return PROGRAMA;
+}
+"retorne" {
+	//printf("%s - %d",yytext,RETORNE);
+	return RETORNE;
+}
+"leia"	{
+	//printf("%s - %d",yytext,LEIA);
+	return LEIA;
+}
+"escreva" {
+	//printf("%s - %d",yytext,ESCREVA);
+	return ESCREVA;
+}
+"novalinha" {
+	//printf("%s - %d",yytext,NOVALINHA);
+	return NOVALINHA;
+}
+"se" {
+	//printf("%s - %d",yytext,SE);
+	return SE;
+}
+"entao"	{
+	//printf("%s - %d",yytext,ENTAO);
+	return ENTAO;
+}
+"senao"	{
+	//printf("%s - %d",yytext,SENAO);
+	return SENAO;
+}
+"enquanto" {
+	//printf("%s - %d",yytext,ENQUANTO);
+	return ENQUANTO;
+}
+"execute" {
+	//printf("%s - %d",yytext,EXECUTE);
+	return EXECUTE;
+}
+";" {
+	//printf("%s - %d",yytext,PV);
+	return PV;
+}
+"," {
+	//printf("%s - %d",yytext,V);
+	return V;
+}
+"(" {
+	//printf("%s - %d",yytext,AP);
+	return AP;
+}
+")" {
+	//printf("%s - %d",yytext,FP);
+	return FP;
+}
+"=" {
+	//printf("%s - %d",yytext,ATRIB);
+	return ATRIB;
+}
+"==" {
+	//printf("%s - %d",yytext,EQUAL);
+	return EQUAL;
+}
+"!=" {
+	//printf("%s - %d",yytext,DIF);
+	return DIF;
+}
+">" {
+	//printf("%s - %d",yytext,MAIOR);
+	return MAIOR;
+}
+"<" {
+	//printf("%s - %d",yytext,MENOR);
+	return MENOR;
+}
+">=" {
+	//printf("%s - %d",yytext,MAIOREQUAL);
+	return MAIOREQUAL;
+}
+"<=" {
+	//printf("%s - %d",yytext,MENOREQUAL);
+	return MENOREQUAL;
+}
+"+" {
+	//printf("%s - %d",yytext,SUM);
+	return SUM;
+}
+"-" {
+	//printf("%s - %d",yytext,SUB);
+	return SUB;
+}
+"*" {
+	//printf("%s - %d",yytext,MUL);
+	return MUL;
+}
+"/" {
+	//printf("%s - %d",yytext,DIV);
+	return DIV;
+}
+"!" {
+	//printf("%s - %d",yytext,EXCL);
+	return EXCL;
+}
+"e" {
+	//printf("%s - %d",yytext,E);
+	return E;
+}
+"ou" {
+	//printf("%s - %d",yytext,OU);
+	return OU;
+}
+"{" {
+	//printf("%s - %d",yytext,AC);
+	return AC;
+}
+"}" {
+	//printf("%s - %d",yytext,FC);
+	return FC;
+}
+("_"|{CARACTER})({DIGIT}*|{CARACTER}*|"_"*)*	{
+	//printf("%s - %d",yytext,ID);
+	yylval.str= strdup(yytext);
+	return ID;
+}
+{DIGIT}+ {
+	//printf("%s - %d",yytext,NUM);
+	yylval.str= strdup(yytext);
+	return NUM;
+}
+. {
+	printf("ERRO: CARACTERE INVALIDO");
+	return(EOF);
+}
 %%
