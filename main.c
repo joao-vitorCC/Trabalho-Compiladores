@@ -12,7 +12,8 @@ extern struct no * ast;
 extern int yyparse();
 void percorreAst(struct no *n);
 int identificaTipo(char str[]);
-
+struct  tbs * tb; 
+int p = 0;
 int main(int argc, char**argv){
      if(argc!=2){
           printf("Uso correto: goianinha <nome> \n");
@@ -22,6 +23,7 @@ int main(int argc, char**argv){
      if(yyin){
         int r = yyparse();
         if(r != 1){
+        	tb = iniciarTabelaSim(NULL);
     		percorreAst(ast);
         }
      }   
@@ -32,20 +34,30 @@ int main(int argc, char**argv){
 
 //Função recursiva para percorrer e imprimir a AST
 void percorreAst(struct no *n) {
-	struct  tbs * tb; 
-	int p = 0;
+
+	
     if (n == NULL) {
         return;
     }
-    tb = iniciarTabelaSim(NULL);
+    
    	switch(n->t){
    		case declFuncVV:
-   			insereVar(tb,n->nome,identificaTipo(n->valor),p);
-   			printf("\n%s %s inserido na tab\n",n->valor,n->nome);
-   			p++;
-   		break;
-   		
    		case declV:
+   			if(busca(tb,n->nome) == NULL){
+	   			insereVar(tb,n->nome,identificaTipo(n->valor),p);
+	   			printf("\n%s %s inserido na tab\n",tb->elems[p].nome,n->nome);
+	   			p++;
+   			}else{printf("\nVariavel %s já existe \n",n->nome);}
+   		    percorreAst(n->f1);
+   		    percorreAst(n->proximo);
+   		break;
+   		case programa:
+   			percorreAst(n->f1);
+   		break;
+   		default:
+   		break;
+   	}	
+   		/*case declV:
    			insereVar(tb,n->nome,identificaTipo(n->valor),p);
    			printf("\n%s %s inserido na tab\n",n->valor,n->nome);
    			p++;
@@ -57,8 +69,7 @@ void percorreAst(struct no *n) {
    			p++;
    		break;
    		
-   		default:
-   		break;
+   		
    	}
      printf("Tipo: %d\n", n->t); // Tipo do nó (se disponível)
     // Imprime informações sobre o nó atual
@@ -90,7 +101,7 @@ void percorreAst(struct no *n) {
 		printf("Próximo de %s:\n", n->nome);
 	}
 	percorreAst(n->proximo);	
-    }
+    }*/
 }
 
 int identificaTipo(char str[]){
