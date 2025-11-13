@@ -14,6 +14,7 @@ void percorreAst(struct no *n);
 int identificaTipo(char str[]);
 struct  tbs * tb; 
 int p = 0;
+
 int main(int argc, char**argv){
      if(argc!=2){
           printf("Uso correto: goianinha <nome> \n");
@@ -43,6 +44,7 @@ void percorreAst(struct no *n) {
    	switch(n->t){
    		case declFuncVV:
    		case declV:
+   		case listaDeclV:
    			if(busca(tb,n->nome) == NULL){
 	   			insereVar(tb,n->nome,identificaTipo(n->valor),p);
 	   			printf("\n%s %s inserido na tab\n",tb->elems[p].nome,n->nome);
@@ -52,6 +54,23 @@ void percorreAst(struct no *n) {
    		    percorreAst(n->proximo);
    		break;
    		case programa:
+   			percorreAst(n->f1);
+   			percorreAst(n->f2);
+   		break;
+   		case declFuncVF:
+   			percorreAst(n->f1);
+   			percorreAst(n->f2);
+   			percorreAst(n->proximo);
+   		break;
+   		case declF:
+   			percorreAst(n->f1);
+   			percorreAst(n->f2);
+   		break;
+   		case blocoV:
+   		case blocoVC:
+   			printf("\n bloco\n");
+   			novoEscopo(tb);
+   			tb = tb->filho;
    			percorreAst(n->f1);
    		break;
    		default:

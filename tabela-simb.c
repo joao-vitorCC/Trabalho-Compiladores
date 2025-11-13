@@ -75,9 +75,9 @@ struct tbs * busca(struct tbs * tb,char valor[]){
             if (strcmp(atual->elems[i].nome, valor) == 0) {
             	//printf("%s - %d - %d\n",atual->elems[0].nome,atual->elems[0].t,atual->tamanho);
                 return atual;
-            }
+            }    
         }
-        atual = atual->filho;
+         atual = atual->pai;
     }
     return NULL;
 }
