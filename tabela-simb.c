@@ -67,7 +67,6 @@ return primeiro;
 }
 
 struct tbs * busca(struct tbs * tb,char valor[]){
-	int tam;
 	struct tbs * atual = encontraUltimo(tb);
 	printf("%p\n",atual);
 	while (atual != NULL) {
@@ -79,6 +78,16 @@ struct tbs * busca(struct tbs * tb,char valor[]){
         }
          atual = atual->pai;
     }
+    return NULL;
+}
+
+struct tbs * buscaEscopo(struct tbs * tb,char valor[]){
+        for (int i = 0; i < tb->tamanhoV; i++) {
+            if (strcmp(tb->elems[i].nome, valor) == 0) {
+            	//printf("%s - %d - %d\n",atual->elems[0].nome,atual->elems[0].t,atual->tamanho);
+                return tb;
+            }    
+        }
     return NULL;
 }
 

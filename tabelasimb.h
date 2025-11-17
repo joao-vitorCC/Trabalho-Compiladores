@@ -37,3 +37,4 @@ struct  tbs* encontraPrimeiro(struct  tbs* tb);
 struct tbs * busca(struct tbs * tb,char valor[]);
 void removeEscopo(struct tbs * tb);
 void desalocaTabela(struct tbs* tb);
+struct tbs * buscaEscopo(struct tbs * tb,char valor[]);

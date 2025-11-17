@@ -12,6 +12,8 @@ extern struct no * ast;
 extern int yyparse();
 void percorreAst(struct no *n);
 int identificaTipo(char str[]);
+void analise(struct no *n);
+
 struct  tbs * tb; 
 int p = 0;
 
@@ -26,6 +28,7 @@ int main(int argc, char**argv){
         if(r != 1){
         	tb = iniciarTabelaSim(NULL);
     		percorreAst(ast);
+    		analise(ast);
         }
      }   
      else 
@@ -34,9 +37,7 @@ int main(int argc, char**argv){
 }
 
 //Função recursiva para percorrer e imprimir a AST
-void percorreAst(struct no *n) {
-
-	
+void percorreAst(struct no *n) {	
     if (n == NULL) {
         return;
     }
@@ -45,33 +46,25 @@ void percorreAst(struct no *n) {
    		case declFuncVV:
    		case declV:
    		case listaDeclV:
-   			if(busca(tb,n->nome) == NULL){
+   			if(buscaEscopo(tb,n->nome) == NULL){
 	   			insereVar(tb,n->nome,identificaTipo(n->valor),p);
 	   			printf("\n%s %s inserido na tab\n",tb->elems[p].nome,n->nome);
 	   			p++;
    			}else{printf("\nVariavel %s já existe \n",n->nome);}
-   		    percorreAst(n->f1);
-   		    percorreAst(n->proximo);
+   		    
    		break;
    		case programa:
-   			percorreAst(n->f1);
-   			percorreAst(n->f2);
    		break;
    		case declFuncVF:
-   			percorreAst(n->f1);
-   			percorreAst(n->f2);
-   			percorreAst(n->proximo);
    		break;
    		case declF:
-   			percorreAst(n->f1);
-   			percorreAst(n->f2);
    		break;
    		case blocoV:
    		case blocoVC:
    			printf("\n bloco\n");
    			novoEscopo(tb);
    			tb = tb->filho;
-   			percorreAst(n->f1);
+   			p = 0;
    		break;
    		default:
    		break;
@@ -121,6 +114,77 @@ void percorreAst(struct no *n) {
 	}
 	percorreAst(n->proximo);	
     }*/
+   percorreAst(n->f1);
+    percorreAst(n->f2);
+   percorreAst(n->f3);
+   percorreAst(n->proximo);
+}
+
+void analise(struct no *n) {	
+    if (n == NULL) {
+        return;
+    }
+    
+   	switch(n->t){
+   		case exprVar:
+   		if(busca(tb,n->nome) != NULL){
+	   			printf("\n%s %s encontrado\n",tb->elems[p].nome,n->nome);
+   			}else{printf("\nVariavel %s não declarada\n",n->nome);}
+   		break;
+   		case exprOr:
+   		break;
+   		default:
+   		break;
+   	}	
+   		/*case declV:
+   			insereVar(tb,n->nome,identificaTipo(n->valor),p);
+   			printf("\n%s %s inserido na tab\n",n->valor,n->nome);
+   			p++;
+   		break;
+   		
+   		case listaDeclV:
+   			insereVar(tb,n->nome,identificaTipo(n->valor),p);
+   			printf("\n%s %s inserido na tab\n",n->valor,n->nome);
+   			p++;
+   		break;
+   		
+   		
+   	}
+     printf("Tipo: %d\n", n->t); // Tipo do nó (se disponível)
+    // Imprime informações sobre o nó atual
+    if(strcmp(n->nome,"") != 0){
+    	printf("Nó: %s\n", n->nome); // Nome do nó
+    }
+    
+        
+
+    // Caso tenha uma subárvore esquerda (esquerda)
+    if (n->f1 != NULL) {
+    	if(strcmp(n->nome,"") != 0){
+		printf("Esquerda de %s:\n", n->nome);
+        }
+        percorreAst(n->f1);
+    }
+
+    // Caso tenha uma subárvore direita (direita)
+    if (n->f2 != NULL) {
+    	if(strcmp(n->nome,"") != 0){
+		printf("Direita de %s:\n", n->nome);
+        }
+        percorreAst(n->f2);
+    }
+
+    // Caso tenha uma lista de próximos nós (por exemplo, comandos ou parâmetros)
+    if (n->proximo != NULL) {
+    	if(strcmp(n->nome,"") != 0){
+		printf("Próximo de %s:\n", n->nome);
+	}
+	percorreAst(n->proximo);	
+    }*/
+   analise(n->f1);
+    analise(n->f2);
+   analise(n->f3);
+   analise(n->proximo);
 }
 
 int identificaTipo(char str[]){
