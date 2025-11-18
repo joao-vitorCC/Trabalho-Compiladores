@@ -34,7 +34,7 @@ void insereFun(struct tbs * tb,char name[],int typeRet,int nParam,struct elemVar
 void criaParametro(struct elemVar params[100],char name[],int pos,int typeP);
 struct  tbs* encontraUltimo(struct  tbs* tb);
 struct  tbs* encontraPrimeiro(struct  tbs* tb);
-struct tbs * busca(struct tbs * tb,char valor[]);
+struct tbs * busca(struct tbs * tb,char valor[],int * tipovar);
 void removeEscopo(struct tbs * tb);
 void desalocaTabela(struct tbs* tb);
 struct tbs * buscaEscopo(struct tbs * tb,char valor[]);

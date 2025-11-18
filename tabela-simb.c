@@ -66,13 +66,14 @@ struct  tbs* encontraPrimeiro(struct  tbs* tb){
 return primeiro;
 }
 
-struct tbs * busca(struct tbs * tb,char valor[]){
+struct tbs * busca(struct tbs * tb,char valor[],int * tipovar){
 	struct tbs * atual = encontraUltimo(tb);
 	printf("%p\n",atual);
 	while (atual != NULL) {
         for (int i = 0; i < atual->tamanhoV; i++) {
             if (strcmp(atual->elems[i].nome, valor) == 0) {
             	//printf("%s - %d - %d\n",atual->elems[0].nome,atual->elems[0].t,atual->tamanho);
+            	*tipovar = atual->elems[i].tv;
                 return atual;
             }    
         }
