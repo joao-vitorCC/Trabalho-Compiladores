@@ -50,7 +50,7 @@ void percorreAst(struct no *n) {
    		case listaDeclV:
    			if(buscaEscopo(tb,n->nome) == NULL){
 	   			insereVar(tb,n->nome,identificaTipo(n->valor),p);
-	   			printf("\n%s %s inserido na tab\n",tb->elems[p].nome,n->nome);
+	   			printf("\n%s %s %s inserido na tab\n",n->valor,tb->elems[p].nome,n->nome);
 	   			p++;
    			}else{printf("\nVariavel %s já existe \n",n->nome);}
    		    
@@ -122,14 +122,15 @@ void percorreAst(struct no *n) {
    percorreAst(n->proximo);
 }
 
-void analise(struct no *n) {	
+void analise(struct no *n) {
+	int ret;	
     if (n == NULL) {
         return;
     }
     
    	switch(n->t){
    		case exprVar:
-   		int ret;
+   		
    		if(busca(tb,n->nome,&ret) != NULL){
 	   			printf("\n%s %s encontrado\n",tb->elems[p].nome,n->nome);
    			}else{printf("\nVariavel %s não declarada\n",n->nome);}
@@ -149,7 +150,7 @@ int verifica_expr(struct no *node) {
     // Anotação de Tipo: Você precisará adicionar um campo `tipo_resultado` (int) 
     // na sua struct no. Se não puder mudar a struct, use um mapa de hash
     // ou retorne o tipo diretamente, como feito aqui.
-    
+    struct tbs * aux;
     int tipo1, tipo2,ret;
 
     switch (node->t) {
@@ -159,7 +160,7 @@ int verifica_expr(struct no *node) {
             return identificaTipo(node->valor); // Ou um tipo string
         case exprVar:
             // 1. Busca variável (node->nome) na Tabela de Símbolos (busca)
-            struct tbs * aux = busca(tb,node->nome,&ret); 
+            aux = busca(tb,node->nome,&ret); 
             if(aux != NULL){
             	if(ret == INT){
 		        	printf("\nINT %s\n",node->nome);
@@ -179,6 +180,30 @@ int verifica_expr(struct no *node) {
         case exprAdicao: // Aplica-se a SUM, SUB, MUL, DIV
             tipo1 = verifica_expr(node->f1);
             tipo2 = verifica_expr(node->f2);
+			 printf("\nADD%d - %d \n",tipo1,tipo2);
+            if (tipo1 == INT && tipo2 == INT) {
+                return INT;
+            }
+            printf("Operação aritmética com tipos incompatíveis.\n");
+            return -1;
+            break;
+		
+
+		 case exprSubtracao: // Aplica-se a SUM, SUB, MUL, DIV
+            tipo1 = verifica_expr(node->f1);
+            tipo2 = verifica_expr(node->f2);
+			 printf("\nSub%d - %d \n",tipo1,tipo2);
+            if (tipo1 == INT && tipo2 == INT) {
+                return INT;
+            }
+            printf("Operação aritmética com tipos incompatíveis.\n");
+            return -1;
+            break;			
+
+		case exprMult: // Aplica-se a SUM, SUB, MUL, DIV
+            tipo1 = verifica_expr(node->f1);
+            tipo2 = verifica_expr(node->f2);
+			 printf("\nmult%d - %d \n",tipo1,tipo2);
             if (tipo1 == INT && tipo2 == INT) {
                 return INT;
             }
@@ -186,11 +211,116 @@ int verifica_expr(struct no *node) {
             return -1;
             break;
 
-        case exprEq: 
-      				// Aplica-se a EQUAL, DIF, MENOR, MAIOR, etc.
-		       tipo1 = verifica_expr(node->f1);
-		       tipo2 = verifica_expr(node->f2);
+			case exprDiv: // Aplica-se a SUM, SUB, MUL, DIV
+            tipo1 = verifica_expr(node->f1);
+            tipo2 = verifica_expr(node->f2);
+			 printf("\nmult%d - %d \n",tipo1,tipo2);
+            if (tipo1 == INT && tipo2 == INT) {
+                return INT;
+            }
+            printf("Operação aritmética com tipos incompatíveis.\n");
+            return -1;
+            break;		
+		
+			case exprInv: // Aplica-se a SUM, SUB, MUL, DIV
+            tipo1 = verifica_expr(node->f1);
+			 printf("\ninv%d  \n",tipo1);
+            if (tipo1 == INT) {
+                return INT;
+            }
+            printf("Operação aritmética com tipos incompatíveis.\n");
+            return -1;
+            break;		
+
+			case exprNeg: // Aplica-se a SUM, SUB, MUL, DIV
+            tipo1 = verifica_expr(node->f1);
+			 printf("\nneg%d\n",tipo1);
+            if (tipo1 == INT) {
+                return INT;
+            }
+			else if(tipo1 == CAR){
+				return CAR;
+			}
+            printf("Operação aritmética com tipos incompatíveis.\n");
+            return -1;
+            break;				
+		
+		case exprAtrib: // Aplica-se a EQUAL, DIF, MENOR, MAIOR, etc.
+		    tipo1 = verifica_expr(node->f1);
+		    tipo2 = verifica_expr(node->f2);
+            printf("\natrib%d - %d \n",tipo1,tipo2);
+            // Tipos devem ser os mesmos (ou compatíveis, e.g., int == char)
+            if (tipo1 != -1 && tipo1 == tipo2) {
+                return INT; // Expressões relacionais retornam 'bool' (representado por int)
+            }
+            printf("expressao eq Comparação com tipos incompatíveis.\n");
+            return -1;
+            break;
+
+        case exprEq: // Aplica-se a EQUAL, DIF, MENOR, MAIOR, etc.
+		    tipo1 = verifica_expr(node->f1);
+		    tipo2 = verifica_expr(node->f2);
             printf("\nEQ%d - %d \n",tipo1,tipo2);
+            // Tipos devem ser os mesmos (ou compatíveis, e.g., int == char)
+            if (tipo1 != -1 && tipo1 == tipo2) {
+                return INT; // Expressões relacionais retornam 'bool' (representado por int)
+            }
+            printf("expressao eq Comparação com tipos incompatíveis.\n");
+            return -1;
+            break;
+
+			case exprDif: // Aplica-se a EQUAL, DIF, MENOR, MAIOR, etc.
+		    tipo1 = verifica_expr(node->f1);
+		    tipo2 = verifica_expr(node->f2);
+            printf("\nDIF%d - %d \n",tipo1,tipo2);
+            // Tipos devem ser os mesmos (ou compatíveis, e.g., int == char)
+            if (tipo1 != -1 && tipo1 == tipo2) {
+                return INT; // Expressões relacionais retornam 'bool' (representado por int)
+            }
+            printf("expressao eq Comparação com tipos incompatíveis.\n");
+            return -1;
+            break;
+
+			case exprMenor: // Aplica-se a EQUAL, DIF, MENOR, MAIOR, etc.
+		    tipo1 = verifica_expr(node->f1);
+		    tipo2 = verifica_expr(node->f2);
+            printf("\nmenor%d - %d \n",tipo1,tipo2);
+            // Tipos devem ser os mesmos (ou compatíveis, e.g., int == char)
+            if (tipo1 != -1 && tipo1 == tipo2) {
+                return INT; // Expressões relacionais retornam 'bool' (representado por int)
+            }
+            printf("expressao eq Comparação com tipos incompatíveis.\n");
+            return -1;
+            break;
+
+			case exprMaior: // Aplica-se a EQUAL, DIF, MENOR, MAIOR, etc.
+		    tipo1 = verifica_expr(node->f1);
+		    tipo2 = verifica_expr(node->f2);
+            printf("\nmaior%d - %d \n",tipo1,tipo2);
+            // Tipos devem ser os mesmos (ou compatíveis, e.g., int == char)
+            if (tipo1 != -1 && tipo1 == tipo2) {
+                return INT; // Expressões relacionais retornam 'bool' (representado por int)
+            }
+            printf("expressao eq Comparação com tipos incompatíveis.\n");
+            return -1;
+            break;
+
+			case exprMaiorEq: // Aplica-se a EQUAL, DIF, MENOR, MAIOR, etc.
+		    tipo1 = verifica_expr(node->f1);
+		    tipo2 = verifica_expr(node->f2);
+            printf("\nmaior igual%d - %d \n",tipo1,tipo2);
+            // Tipos devem ser os mesmos (ou compatíveis, e.g., int == char)
+            if (tipo1 != -1 && tipo1 == tipo2) {
+                return INT; // Expressões relacionais retornam 'bool' (representado por int)
+            }
+            printf("expressao eq Comparação com tipos incompatíveis.\n");
+            return -1;
+            break;
+
+			case exprMenorEq: // Aplica-se a EQUAL, DIF, MENOR, MAIOR, etc.
+		    tipo1 = verifica_expr(node->f1);
+		    tipo2 = verifica_expr(node->f2);
+            printf("\nmenor igual%d - %d \n",tipo1,tipo2);
             // Tipos devem ser os mesmos (ou compatíveis, e.g., int == char)
             if (tipo1 != -1 && tipo1 == tipo2) {
                 return INT; // Expressões relacionais retornam 'bool' (representado por int)
