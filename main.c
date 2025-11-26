@@ -45,13 +45,21 @@ void percorreAst(struct no *n) {
     }
     
    	switch(n->t){
-   		case declFuncVV:
    		case declV:
+   			if(buscaEscopo(tb,n->nome) == NULL){
+	   			insereVar(tb,n->nome,identificaTipo(n->valor),p);
+	   			printf("\n%s %s %s inserido na tab\n",n->valor,tb->elems[p].nome,n->nome);
+	   			p++;
+	   			if(n->proximo != NULL) strcpy(n->proximo->valor,n->valor);
+   			}else{printf("\nVariavel %s já existe \n",n->nome);}
+   		break;
+   		case declFuncVV:
    		case listaDeclV:
    			if(buscaEscopo(tb,n->nome) == NULL){
 	   			insereVar(tb,n->nome,identificaTipo(n->valor),p);
 	   			printf("\n%s %s %s inserido na tab\n",n->valor,tb->elems[p].nome,n->nome);
 	   			p++;
+	   			if(n->f1 != NULL) strcpy(n->f1->valor,n->valor);
    			}else{printf("\nVariavel %s já existe \n",n->nome);}
    		    
    		break;
