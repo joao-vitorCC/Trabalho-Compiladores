@@ -73,13 +73,13 @@ void percorreAst(struct no *n) {
 	   				if(n->f1->f1 == NULL){
 	   					qtdP = 0;	
 	   				}
-	   				else if(n->f1->f1->t == listaParUni){
+	   				else if(n->f1->f1->f1->t == listaParUni){
 	   					qtdP = 1;
 	   					printf("\n p = %s\n",n->f1->f1->f1->nome);
 	   					criaParametro(Parametros,n->f1->f1->f1->nome,0,identificaTipo(n->f1->f1->f1->valor));	
 	   				}
 		   			insereFun(tb,n->nome,identificaTipo(n->valor),qtdP,Parametros,f);
-		   			printf("\n%s %d %sinserido na tab\n",tb->elemsf[f].nomeF,tb->elemsf[f].tRet,tb->elemsf[f].param[0].nome);
+		   			printf("\n%s %d %s inserido na tab\n",tb->elemsf[f].nomeF,tb->elemsf[f].tRet,tb->elemsf[f].param[0].nome);
 		   			f++;
    			}else{printf("\nVariavel %s já existe \n",n->nome);}
    		break;
