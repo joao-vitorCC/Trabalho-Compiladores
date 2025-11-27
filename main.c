@@ -17,6 +17,7 @@ int verifica_expr(struct no *node);
 
 struct  tbs * tb; 
 int p = 0;
+int f = 0;
 
 int main(int argc, char**argv){
      if(argc!=2){
@@ -29,7 +30,7 @@ int main(int argc, char**argv){
         if(r != 1){
         	tb = iniciarTabelaSim(NULL);
     		percorreAst(ast);
-    		//analise(ast);
+    		analise(ast);
     		verifica_expr(ast);
         }
      }   
@@ -39,7 +40,9 @@ int main(int argc, char**argv){
 }
 
 //Função recursiva para percorrer e imprimir a AST
-void percorreAst(struct no *n) {	
+void percorreAst(struct no *n) {
+	int qtdP = 0;
+	struct elemVar Parametros[100];	
     if (n == NULL) {
         return;
     }
@@ -66,6 +69,19 @@ void percorreAst(struct no *n) {
    		case programa:
    		break;
    		case declFuncVF:
+   				if(buscaEscopo(tb,n->nome) == NULL){
+	   				if(n->f1->f1 == NULL){
+	   					qtdP = 0;	
+	   				}
+	   				else if(n->f1->f1->t == listaParUni){
+	   					qtdP = 1;
+	   					printf("\n p = %s\n",n->f1->f1->f1->nome);
+	   					criaParametro(Parametros,n->f1->f1->f1->nome,0,identificaTipo(n->f1->f1->f1->valor));	
+	   				}
+		   			insereFun(tb,n->nome,identificaTipo(n->valor),qtdP,Parametros,f);
+		   			printf("\n%s %d %sinserido na tab\n",tb->elemsf[f].nomeF,tb->elemsf[f].tRet,tb->elemsf[f].param[0].nome);
+		   			f++;
+   			}else{printf("\nVariavel %s já existe \n",n->nome);}
    		break;
    		case declF:
    		break;
