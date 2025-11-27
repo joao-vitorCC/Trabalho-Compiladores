@@ -14,6 +14,8 @@ void percorreAst(struct no *n);
 int identificaTipo(char str[]);
 void analise(struct no *n);
 int verifica_expr(struct no *node);
+void insereParam(struct no *n,struct elemVar Parametros[100],int * qtd);
+int buscaP(struct elemVar Parametros[100],char val[] );
 
 struct  tbs * tb; 
 int p = 0;
@@ -77,6 +79,9 @@ void percorreAst(struct no *n) {
 	   					qtdP = 1;
 	   					printf("\n p = %s\n",n->f1->f1->f1->nome);
 	   					criaParametro(Parametros,n->f1->f1->f1->nome,0,identificaTipo(n->f1->f1->f1->valor));	
+	   				}
+	   				else if(n->f1->f1->f1->t == listaPar){
+	   					insereParam(n->f1->f1->f1,Parametros,&qtdP);
 	   				}
 		   			insereFun(tb,n->nome,identificaTipo(n->valor),qtdP,Parametros,f);
 		   			printf("\n%s %d %s inserido na tab\n",tb->elemsf[f].nomeF,tb->elemsf[f].tRet,tb->elemsf[f].param[0].nome);
@@ -359,6 +364,7 @@ int verifica_expr(struct no *node) {
             // 3. Checa número de argumentos (percorrendo listexpr node->f1).
             // 4. Verifica compatibilidade de tipos dos argumentos.
             // 5. Retorna o tipo de retorno da função.
+            
             break;
             
 			case exprOr: // Aplica-se a EQUAL, DIF, MENOR, MAIOR, etc.
@@ -408,4 +414,28 @@ int identificaTipo(char str[]){
 		return CAR;
 	}
 return -1;
+}
+void insereParam(struct no *n,struct elemVar Parametros[100],int * qtd){
+	int i = 0;
+	while(n != NULL){
+		printf("\n insereP %s\n",n->nome);
+		if(buscaP(Parametros,n->nome) != 0){
+			criaParametro(Parametros,n->nome,i,identificaTipo(n->valor));
+			i++;
+			n = n->proximo;
+		}else{
+			printf("\nParametro %s já existe \n",n->nome);
+			return;
+		}
+	}	
+	*qtd = i;
+	printf("\n insereP %d\n",i);
+}
+int buscaP(struct elemVar Parametros[100],char val[] ){
+	for(int i=0;i<= 100;i++){
+		if(strcmp(Parametros[i].nome,val) == 0){
+			return 0;
+		}
+	}
+return 1;	
 }
