@@ -38,3 +38,4 @@ struct tbs * busca(struct tbs * tb,char valor[],int * tipovar);
 void removeEscopo(struct tbs * tb);
 void desalocaTabela(struct tbs* tb);
 struct tbs * buscaEscopo(struct tbs * tb,char valor[]);
+struct tbs * buscaEscopoFuncao(struct tbs * tb,char valor[]);

@@ -71,7 +71,7 @@ void percorreAst(struct no *n) {
    		case programa:
    		break;
    		case declFuncVF:
-   				if(buscaEscopo(tb,n->nome) == NULL){
+   				if(buscaEscopoFuncao(tb,n->nome) == NULL){
 	   				if(n->f1->f1 == NULL){
 	   					qtdP = 0;	
 	   				}
@@ -86,7 +86,7 @@ void percorreAst(struct no *n) {
 		   			insereFun(tb,n->nome,identificaTipo(n->valor),qtdP,Parametros,f);
 		   			printf("\n%s %d %s inserido na tab\n",tb->elemsf[f].nomeF,tb->elemsf[f].tRet,tb->elemsf[f].param[0].nome);
 		   			f++;
-   			}else{printf("\nVariavel %s já existe \n",n->nome);}
+   			}else{printf("\nFuncao %s já existe \n",n->nome);}
    		break;
    		case declF:
    		break;
@@ -96,6 +96,7 @@ void percorreAst(struct no *n) {
    			novoEscopo(tb);
    			tb = tb->filho;
    			p = 0;
+   			f = 0;
    		break;
    		default:
    		break;
@@ -156,10 +157,8 @@ void analise(struct no *n) {
     if (n == NULL) {
         return;
     }
-    
    	switch(n->t){
    		case exprVar:
-   		
    		if(busca(tb,n->nome,&ret) != NULL){
 	   			printf("\n%s %s encontrado\n",tb->elems[p].nome,n->nome);
    			}else{printf("\nVariavel %s não declarada\n",n->nome);}
@@ -432,7 +431,7 @@ void insereParam(struct no *n,struct elemVar Parametros[100],int * qtd){
 	printf("\n insereP %d\n",i);
 }
 int buscaP(struct elemVar Parametros[100],char val[] ){
-	for(int i=0;i<= 100;i++){
+	for(int i=0;i< 100;i++){
 		if(strcmp(Parametros[i].nome,val) == 0){
 			return 0;
 		}

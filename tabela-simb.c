@@ -92,6 +92,21 @@ struct tbs * buscaEscopo(struct tbs * tb,char valor[]){
     return NULL;
 }
 
+struct tbs * buscaEscopoFuncao(struct tbs * tb,char valor[]){
+     struct tbs * atual = encontraUltimo(tb);
+	printf("%p\n",atual);
+	while (atual != NULL) {
+        for (int i = 0; i < atual->tamanhoF; i++) {
+            if (strcmp(atual->elemsf[i].nomeF, valor) == 0) {
+            	//printf("%s - %d - %d\n",atual->elems[0].nome,atual->elems[0].t,atual->tamanho);
+                return atual;
+            }    
+        }
+         atual = atual->pai;
+    }
+    return NULL;   
+}
+
 void removeEscopo(struct tbs * tb){
 	struct tbs * atual;
 	struct tbs * pai;
