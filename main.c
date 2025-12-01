@@ -163,6 +163,12 @@ void analise(struct no *n) {
 	   			printf("\n%s %s encontrado\n",tb->elems[p].nome,n->nome);
    			}else{printf("\nVariavel %s não declarada\n",n->nome);}
    		break;
+		case exprChamaFuncParam:
+		case exprChamaFuncSParam:
+   		if(buscaEscopoFuncao(tb,n->nome) != NULL){
+	   			printf("\n%s %s encontrado\n",tb->elemsf[f].nomeF,n->nome);
+   			}else{printf("\nFuncao %s não declarada\n",n->nome);}
+   		break;
    		default:
    		break;
    	}	
