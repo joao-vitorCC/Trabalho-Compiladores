@@ -21,6 +21,7 @@ struct  tbs * tb;
 
 int p = 0;
 int f = 0;
+int esc=0;
 
 int main(int argc, char**argv){
      if(argc!=2){
@@ -74,7 +75,62 @@ void percorreAst(struct no *n) {
    		break;
    		
    		case programa:
+		case declP:
+		case listaParam:
+		case listaPar:
+		case listaParUni:
+		case tipoInt:
+		case tipoCar:
+		case listaComUn:
+		case listaCom:
+		case comanExpr:
+		case comanRet:
+		case comanLeia:
+		case comanEscrevaExp:
+		case comanEscrevaCadeia:
+		case comanLinha:
+		case comanSe:
+		case comanSeSenao:
+		case comanEnquanto:
+		case comanBloco:
+		case exprAtrib:
+		case exprOr:
+		case exprAnd:
+		case exprEq:
+		case exprDif:
+		case exprMenor:
+		case exprMaior:
+		case exprMaiorEq:
+		case exprMenorEq:
+		case exprAdicao:
+		case exprSubtracao:
+		case exprMult:
+		case exprDiv:
+		case exprInv:
+		case exprNeg:
+		case exprChamaFuncParam:
+		case exprChamaFuncSParam:
+		case exprVar:
+		case exprCadeiaConst:
+		case exprIntConst:
+		case exprParen:
+		case primExpr:
+		case unexpr:
+		case mulexpr:
+		case addexpr:
+		case desigexpr:
+		case eqexpr:
+		case andexpr:
+		case orexpr:
+		case lvalueexpr:
+		case listexprS:
+		case listexprU:
+		
+		percorreAst(n->f1);
+    	percorreAst(n->f2);
+    	percorreAst(n->f3);
    		break;
+   		
    		case declFuncVF:
    				if(buscaEscopoFuncao(tb,n->nome) == NULL){
 	   				if(n->f1->f1 == NULL){
@@ -92,6 +148,7 @@ void percorreAst(struct no *n) {
 		   			printf("\n%s %d %s inserido na tab\n",tb->elemsf[f].nomeF,tb->elemsf[f].tRet,tb->elemsf[f].param[0].nome);
 		   			f++;
    			}else{printf("\nFuncao %s já existe \n",n->nome);return;}
+   			percorreAst(n->f1->f2);
    			percorreAst(n->proximo);
    		break;
    		
@@ -102,19 +159,21 @@ void percorreAst(struct no *n) {
    			printf("\n bloco\n");
    			novoEscopo(tb);
    			tb = tb->filho;
+   			printf("\n esc %p\n",tb);
+   			esc++;
+   			printf("\nescopo %d\n",esc);
    			p = 0;
    			f = 0;
-   			percorreAst(n->proximo);
+   			//percorreAst(n->proximo);
    			printf("\n fecha bloco\n");
+   			esc--;
     		//tb = tb->pai;
    		break;
    		
    		default:
    		break;
    	}	
-   	percorreAst(n->f1);
-    percorreAst(n->f2);
-    percorreAst(n->f3);
+
    		/*case declV:
    			insereVar(tb,n->nome,identificaTipo(n->valor),p);
    			printf("\n%s %s inserido na tab\n",n->valor,n->nome);
