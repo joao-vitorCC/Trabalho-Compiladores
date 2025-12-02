@@ -16,7 +16,7 @@ void analise(struct no *n);
 int verifica_expr(struct no *node);
 void insereParam(struct no *n,struct elemVar Parametros[100],int * qtd);
 int buscaP(struct elemVar Parametros[100],char val[] );
-
+int vParam(struct no *n,struct elemVar Parametros[100]);
 struct  tbs * tb;
 
 int p = 0;
@@ -59,8 +59,12 @@ void percorreAst(struct no *n) {
 	   			printf("\n%s %s %s inserido na tab\n",n->valor,tb->elems[p].nome,n->nome);
 	   			p++;
 	   			if(n->proximo != NULL) strcpy(n->proximo->valor,n->valor);
-   			}else{printf("\nVariavel %s já existe \n",n->nome);return;}
-   			percorreAst(n->proximo);
+   			}else{printf("\nVariavel  %s já existe \n",n->nome);return;}
+   			percorreAst(n->f1);
+			percorreAst(n->f2);
+			percorreAst(n->f3);
+			percorreAst(n->proximo);
+   			
    		break;
    		
    		case declFuncVV:
@@ -71,10 +75,13 @@ void percorreAst(struct no *n) {
 	   			p++;
 	   			if(n->f1 != NULL) strcpy(n->f1->valor,n->valor);
    			}else{printf("\nVariavel %s já existe \n",n->nome);return;}
-   			percorreAst(n->proximo);
+   			percorreAst(n->f1);
+			percorreAst(n->f2);
+			percorreAst(n->f3);
+			percorreAst(n->proximo);
    		break;
    		
-   		case programa:
+   		/*case programa:
 		case declP:
 		case listaParam:
 		case listaPar:
@@ -129,7 +136,8 @@ void percorreAst(struct no *n) {
 		percorreAst(n->f1);
     	percorreAst(n->f2);
     	percorreAst(n->f3);
-   		break;
+    	percorreAst(n->proximo);
+   		break;*/
    		
    		case declFuncVF:
    				if(buscaEscopoFuncao(tb,n->nome) == NULL){
@@ -140,15 +148,23 @@ void percorreAst(struct no *n) {
 	   					qtdP = 1;
 	   					printf("\n p = %s\n",n->f1->f1->f1->nome);
 	   					criaParametro(Parametros,n->f1->f1->f1->nome,0,identificaTipo(n->f1->f1->f1->valor));	
+	   					
 	   				}
 	   				else if(n->f1->f1->f1->t == listaPar){
 	   					insereParam(n->f1->f1->f1,Parametros,&qtdP);
 	   				}
-		   			insereFun(tb,n->nome,identificaTipo(n->valor),qtdP,Parametros,f);
-		   			printf("\n%s %d %s inserido na tab\n",tb->elemsf[f].nomeF,tb->elemsf[f].tRet,tb->elemsf[f].param[0].nome);
-		   			f++;
-   			}else{printf("\nFuncao %s já existe \n",n->nome);return;}
+	   				if(n->f1->f2->f1->t == listaDeclV){
+	   					if(vParam(n->f1->f2->f1,Parametros) != 0){
+	   						insereFun(tb,n->nome,identificaTipo(n->valor),qtdP,Parametros,f);
+		   					printf("\n%s %d %s inserido na tab\n",tb->elemsf[f].nomeF,tb->elemsf[f].tRet,tb->elemsf[f].param[0].nome);
+		   					f++;
+		   				}
+		   		   }		
+   				}else{printf("\nFuncao %s já existe \n",n->nome);return;}
    			percorreAst(n->f1->f2);
+   			percorreAst(n->f1);
+			percorreAst(n->f2);
+			percorreAst(n->f3);
    			percorreAst(n->proximo);
    		break;
    		
@@ -168,58 +184,19 @@ void percorreAst(struct no *n) {
    			printf("\n fecha bloco\n");
    			esc--;
     		//tb = tb->pai;
+    		percorreAst(n->f1);
+			percorreAst(n->f2);
+			percorreAst(n->f3);
    		break;
    		
    		default:
+   		percorreAst(n->f1);
+    	percorreAst(n->f2);
+    	percorreAst(n->f3);
+    	percorreAst(n->proximo);
    		break;
    	}	
 
-   		/*case declV:
-   			insereVar(tb,n->nome,identificaTipo(n->valor),p);
-   			printf("\n%s %s inserido na tab\n",n->valor,n->nome);
-   			p++;
-   		break;
-   		
-   		case listaDeclV:
-   			insereVar(tb,n->nome,identificaTipo(n->valor),p);
-   			printf("\n%s %s inserido na tab\n",n->valor,n->nome);
-   			p++;
-   		break;
-   		
-   		
-   	}
-     printf("Tipo: %d\n", n->t); // Tipo do nó (se disponível)
-    // Imprime informações sobre o nó atual
-    if(strcmp(n->nome,"") != 0){
-    	printf("Nó: %s\n", n->nome); // Nome do nó
-    }
-    
-        
-
-    // Caso tenha uma subárvore esquerda (esquerda)
-    if (n->f1 != NULL) {
-    	if(strcmp(n->nome,"") != 0){
-		printf("Esquerda de %s:\n", n->nome);
-        }
-        percorreAst(n->f1);
-    }
-
-    // Caso tenha uma subárvore direita (direita)
-    if (n->f2 != NULL) {
-    	if(strcmp(n->nome,"") != 0){
-		printf("Direita de %s:\n", n->nome);
-        }
-        percorreAst(n->f2);
-    }
-
-    // Caso tenha uma lista de próximos nós (por exemplo, comandos ou parâmetros)
-    if (n->proximo != NULL) {
-    	if(strcmp(n->nome,"") != 0){
-		printf("Próximo de %s:\n", n->nome);
-	}
-	percorreAst(n->proximo);	
-    }*/
-   
 }
 
 void analise(struct no *n) {
@@ -515,4 +492,17 @@ int buscaP(struct elemVar Parametros[100],char val[] ){
 		}
 	}
 return 1;	
+}
+
+int vParam(struct no *n,struct elemVar Parametros[100]){
+	struct no * aux;
+	aux = n;
+	while(aux != NULL){
+		if(buscaP(Parametros,aux->nome) == 0){
+			printf("\nVariavel %s tem mesmo nome de parametro\n",aux->nome);
+			return 0;
+		}
+		aux = aux->proximo;
+	}
+	return 1;	
 }
